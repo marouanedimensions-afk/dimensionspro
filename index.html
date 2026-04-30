@@ -1819,15 +1819,10 @@
             if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation en cours...</p>';
             
             try {
-                await loadProfilesList();
+                // Attendre un peu pour que Firebase soit prêt
+                await new Promise(r => setTimeout(r, 500));
                 
-                // Sync planning (optionnel)
-                try {
-                    const snap = await db.collection('planning').get();
-                    const planning = [];
-                    snap.forEach(d => planning.push(d.data()));
-                    localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planning));
-                } catch (e) {}
+                await loadProfilesList();
                 
                 const toast = document.createElement('div');
                 toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-5 py-2 rounded-2xl text-sm';
@@ -1838,7 +1833,7 @@
                 console.error(e);
                 const toast = document.createElement('div');
                 toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-5 py-2 rounded-2xl text-sm';
-                toast.innerHTML = `⚠️ Erreur - Vérifie ta connexion`;
+                toast.innerHTML = `⚠️ Erreur synchro - Réessaie dans 10 secondes`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             }
