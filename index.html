@@ -24,67 +24,89 @@
 </head>
 <body class="bg-zinc-950 text-zinc-200">
     
-    <!-- HOME SCREEN - BEAUTIFUL DESIGN -->
-    <div id="home-screen" class="min-h-screen bg-zinc-950 flex items-center justify-center relative overflow-hidden">
+    <!-- HOME SCREEN - MODERN FULL PAGE DESIGN -->
+    <div id="home-screen" class="min-h-screen bg-zinc-950">
         
-        <!-- Background decoration -->
-        <div class="absolute inset-0 bg-[radial-gradient(#f97316_0.5px,transparent_1px)] bg-[length:4px_4px] opacity-10"></div>
-        
-        <div class="relative z-10 text-center max-w-lg mx-auto px-6">
-            
-            <!-- Logo -->
-            <div class="flex justify-center mb-8">
-                <div class="relative">
-                    <div class="w-28 h-28 bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-4 shadow-2xl shadow-orange-500/30">
-                        <img src="logo-dimensionspro.png" alt="Dimensionspro" class="w-full h-full object-contain bg-transparent">
+        <!-- TOP NAV -->
+        <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
+                <!-- Logo + Title -->
+                <div class="flex items-center gap-x-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-1.5">
+                        <img src="logo-dimensionspro.png" alt="Dimensionspro" class="w-full h-full object-contain">
                     </div>
-                    <div class="absolute -bottom-2 -right-2 bg-black text-orange-400 text-xs font-bold px-3 py-1 rounded-full border border-orange-500">PRO</div>
+                    <div>
+                        <div class="flex items-baseline -space-x-0.5">
+                            <span class="title-font text-2xl font-bold tracking-tighter text-white">DIMENSIONS</span>
+                            <span class="title-font text-2xl font-bold tracking-tighter text-orange-500">PRO</span>
+                        </div>
+                        <div class="text-[9px] text-orange-400 -mt-1 tracking-[1px]">ARCHITECTURE &amp; INGÉNIERIE</div>
+                    </div>
+                </div>
+                
+                <!-- Right side: Icons + Status -->
+                <div class="flex items-center gap-x-2">
+                    <button onclick="forceSyncNow()" 
+                            class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-all">
+                        <i class="fa-solid fa-sync text-base"></i>
+                    </button>
+                    <button onclick="showProfileActionsMenu()" 
+                            class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-all">
+                        <i class="fa-solid fa-cog text-base"></i>
+                    </button>
+                    
+                    <div class="w-px h-5 bg-zinc-700 mx-1"></div>
+                    
+                    <div id="firebase-status" 
+                         class="text-[10px] px-3 py-1 bg-emerald-900 rounded-full text-emerald-400 flex items-center gap-x-1.5">
+                        <i class="fa-solid fa-check-circle text-xs"></i> 
+                        <span class="font-medium">Sync temps réel</span>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Title -->
-            <div class="mb-4">
-                <h1 class="title-font text-7xl font-bold tracking-tighter">
-                    <span class="text-white">DIMENSIONS</span><br>
-                    <span class="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">PRO</span>
-                </h1>
+        </nav>
+        
+        <!-- HERO SECTION -->
+        <div class="max-w-5xl mx-auto px-8 pt-20 pb-16 text-center">
+            <div class="inline-flex items-center gap-x-2 bg-zinc-900 rounded-full px-4 py-1 mb-6 border border-zinc-800">
+                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span class="text-xs font-semibold text-emerald-400 tracking-widest">SYNCHRONISATION CLOUD ACTIVE</span>
             </div>
             
-            <p class="text-2xl text-zinc-400 mb-4">Architecture & Ingénierie</p>
-            <p class="text-sm text-zinc-500 mb-12">Outils professionnels • Synchronisation cloud</p>
+            <h1 class="text-7xl md:text-8xl font-bold tracking-tighter leading-none mb-4">
+                <span class="text-white">Bienvenue sur</span><br>
+                <span class="bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">DIMENSIONS PRO</span>
+            </h1>
             
-            <!-- Main CTA -->
-            <div class="mb-8">
-                <button onclick="showCreateProfileModal()" 
-                        class="group w-full py-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-3xl text-xl flex items-center justify-center gap-x-4 shadow-xl shadow-orange-500/30 transition-all active:scale-[0.985]">
-                    <i class="fa-solid fa-user-plus text-2xl group-active:rotate-12 transition-transform"></i>
-                    <span>Créer mon profil</span>
-                </button>
-            </div>
+            <p class="max-w-md mx-auto text-xl text-zinc-400 mb-10">
+                Votre espace professionnel pour l'architecture et l'ingénierie au Maroc
+            </p>
             
-            <!-- Existing profiles -->
-            <div id="profiles-list" class="text-left"></div>
-            
-            <!-- Bouton Rafraîchir -->
-            <button onclick="forceSyncNow()" 
-                    class="mt-4 w-full py-3 text-sm bg-zinc-700 hover:bg-orange-600 text-white rounded-2xl flex items-center justify-center gap-x-2 font-semibold shadow-lg">
-                <i class="fa-solid fa-sync"></i> 
-                <span>Rafraîchir</span>
+            <button onclick="showCreateProfileModal()" 
+                    class="group inline-flex items-center gap-x-3 px-8 py-4 bg-white hover:bg-orange-500 text-black hover:text-white font-bold rounded-3xl text-lg transition-all active:scale-[0.985] shadow-xl shadow-orange-500/20">
+                <i class="fa-solid fa-user-plus text-xl group-hover:rotate-12 transition-transform"></i>
+                <span>Créer un nouveau profil</span>
             </button>
-            <p class="text-[10px] text-zinc-500 mt-1 text-center">Clique ici pour voir les profils et tâches de ton ami</p>
             
+            <p class="text-xs text-zinc-500 mt-4">Gratuit • Sync instantanée</p>
         </div>
         
-        <!-- Bottom bar -->
-        <div class="absolute bottom-8 text-center text-sm font-bold tracking-[4px] text-orange-500">
-            DIMENSIONS MAROC
-        </div>
-
-        <!-- Local + Google Sheets Status -->
-        <div id="firebase-status" 
-             class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] px-3 py-0.5 bg-emerald-900 rounded-full text-emerald-400 flex items-center gap-x-1">
-            <i class="fa-solid fa-check-circle text-xs"></i> 
-            <span>Firebase • Sync temps réel</span>
+        <!-- PROFILES SECTION -->
+        <div class="max-w-7xl mx-auto px-8 pb-24">
+            <div class="flex items-end justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-semibold tracking-tight">Mes profils</h2>
+                    <p class="text-sm text-zinc-500">Sélectionnez ou créez un profil pour commencer</p>
+                </div>
+                <div class="text-xs text-zinc-500 font-mono" id="profile-count"></div>
+            </div>
+            
+            <!-- Profiles Grid -->
+            <div id="profiles-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+            
+            <div class="mt-8 text-center">
+                <p class="text-xs text-zinc-500">DIMENSIONS MAROC • Outils professionnels pour architectes et ingénieurs</p>
+            </div>
         </div>
         
     </div>
@@ -391,10 +413,41 @@
             </div>
             <div class="space-y-5">
                 <div><label class="text-sm text-zinc-400">Nom complet</label><input id="profile-name-input" type="text" placeholder="Ahmed BNI CHIKER" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg"></div>
+                
+                <div>
+                    <label class="text-sm text-zinc-400">Mot de passe (optionnel)</label>
+                    <input id="profile-password-input" type="password" placeholder="Laisser vide si pas de mot de passe" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg">
+                    <p class="text-[10px] text-zinc-500 mt-1">Tu pourras en définir un plus tard dans les paramètres</p>
+                </div>
             </div>
             <div class="flex gap-x-4 mt-8">
                 <button onclick="hideCreateProfileModal()" class="flex-1 py-4 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-2xl text-lg">Retour</button>
-                <button onclick="createProfile()" class="flex-1 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl text-lg">Créer mon profil</button>
+                <button onclick="createProfile()" class="flex-1 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl text-lg">Créer un nouveau profil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD PROMPT MODAL -->
+    <div id="password-prompt-modal" class="fixed inset-0 bg-black/90 z-[99999] hidden items-center justify-center">
+        <div class="glass rounded-3xl p-10 w-full max-w-sm border border-zinc-700">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-lock text-3xl text-orange-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold">Profil protégé</h2>
+                <p class="text-sm text-zinc-400 mt-1" id="password-profile-name"></p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm text-zinc-400">Mot de passe</label>
+                    <input id="password-input" type="password" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg" placeholder="Entrez votre mot de passe">
+                </div>
+            </div>
+            
+            <div class="flex gap-x-3 mt-8">
+                <button onclick="hidePasswordPrompt()" class="flex-1 py-3.5 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-2xl">Annuler</button>
+                <button onclick="submitPassword()" class="flex-1 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">Déverrouiller</button>
             </div>
         </div>
     </div>
@@ -450,56 +503,129 @@
 
     <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="fixed inset-0 bg-black/90 z-[99999] hidden items-center justify-center">
-        <div class="glass rounded-3xl p-8 w-full max-w-md border border-zinc-700">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">Paramètres</h3>
-                <button onclick="closeSettingsModal()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-times text-2xl"></i></button>
+        <div class="glass rounded-3xl w-full max-w-md border border-zinc-700 overflow-hidden">
+            
+            <!-- Header -->
+            <div class="px-8 pt-8 pb-6 border-b border-zinc-700 flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold">Paramètres</h3>
+                    <p class="text-xs text-zinc-500">Gestion du compte</p>
+                </div>
+                <button onclick="closeSettingsModal()" class="text-zinc-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-times text-2xl"></i>
+                </button>
             </div>
 
-            <div class="space-y-6">
+            <div class="p-8 space-y-8 max-h-[75vh] overflow-auto">
                 
-                <!-- Profile Info -->
+                <!-- Avatar -->
+                <div class="flex flex-col items-center">
+                    <div class="relative">
+                        <div id="settings-avatar-preview" 
+                             class="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center text-4xl font-bold text-orange-400 border-4 border-zinc-700 overflow-hidden cursor-pointer"
+                             onclick="document.getElementById('settings-avatar-input').click()">
+                            <span id="settings-avatar-initial">A</span>
+                            <img id="settings-avatar-img" class="hidden w-full h-full object-cover" alt="Avatar">
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer border-2 border-zinc-900"
+                             onclick="document.getElementById('settings-avatar-input').click()">
+                            <i class="fa-solid fa-camera text-xs"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="settings-avatar-input" accept="image/*" class="hidden" onchange="previewAvatar(this)">
+                    <p class="text-xs text-zinc-500 mt-3">Cliquez pour changer la photo de profil</p>
+                </div>
+
+                <!-- Informations du profil -->
                 <div>
-                    <h4 class="font-semibold mb-3 text-orange-400">Informations du profil</h4>
-                    <div class="space-y-3">
-                        <div><label class="text-xs text-zinc-400">Nom</label><input id="settings-nom" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2"></div>
-                        <div><label class="text-xs text-zinc-400">Prénom</label><input id="settings-prenom" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2"></div>
-                        <div><label class="text-xs text-zinc-400">Téléphone</label><input id="settings-telephone" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2"></div>
+                    <div class="flex items-center gap-x-2 mb-4">
+                        <i class="fa-solid fa-user text-orange-400"></i>
+                        <h4 class="font-semibold text-orange-400">Informations du profil</h4>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-zinc-400 block mb-1.5">Nom</label>
+                                <input id="settings-nom" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="text-xs text-zinc-400 block mb-1.5">Prénom</label>
+                                <input id="settings-prenom" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs text-zinc-400 block mb-1.5">Téléphone</label>
+                            <input id="settings-telephone" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm" placeholder="+212 6XX-XXXXXX">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Theme -->
+                <!-- Sécurité -->
                 <div>
-                    <h4 class="font-semibold mb-3 text-orange-400">Thème</h4>
-                    <div class="flex gap-x-3">
-                        <button onclick="setTheme('dark')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500">
-                            <i class="fa-solid fa-moon"></i> <span>Sombre</span>
-                        </button>
-                        <button onclick="setTheme('light')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500">
-                            <i class="fa-solid fa-sun"></i> <span>Clair</span>
-                        </button>
+                    <div class="flex items-center gap-x-2 mb-4">
+                        <i class="fa-solid fa-shield-halved text-orange-400"></i>
+                        <h4 class="font-semibold text-orange-400">Sécurité</h4>
                     </div>
-                </div>
-
-                <!-- Password -->
-                <div>
-                    <h4 class="font-semibold mb-3 text-orange-400">Sécurité</h4>
-                    <button onclick="setPassword()" class="w-full py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500">
-                        <i class="fa-solid fa-key"></i> <span>Définir un mot de passe</span>
+                    
+                    <button onclick="setPassword()" 
+                            class="w-full flex items-center justify-between bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-3.5 transition-all group">
+                        <div class="flex items-center gap-x-3">
+                            <i class="fa-solid fa-key text-orange-400"></i>
+                            <div class="text-left">
+                                <div class="text-sm font-medium">Mot de passe</div>
+                                <div class="text-[10px] text-zinc-500" id="password-status">Cliquez pour définir ou modifier</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-zinc-400 group-hover:text-orange-400 transition-colors"></i>
                     </button>
                 </div>
 
-                <!-- Danger Zone -->
-                <div class="pt-4 border-t border-zinc-700">
-                    <h4 class="font-semibold mb-3 text-red-400">Zone dangereuse</h4>
-                    <button onclick="deleteCurrentProfile()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl flex items-center justify-center gap-x-2">
-                        <i class="fa-solid fa-trash"></i> <span>Supprimer mon profil</span>
+                <!-- Apparence -->
+                <div>
+                    <div class="flex items-center gap-x-2 mb-4">
+                        <i class="fa-solid fa-palette text-orange-400"></i>
+                        <h4 class="font-semibold text-orange-400">Apparence</h4>
+                    </div>
+                    
+                    <div class="flex gap-x-3">
+                        <button onclick="setTheme('dark')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500 transition-all">
+                            <i class="fa-solid fa-moon text-orange-400"></i> 
+                            <span class="text-sm font-medium">Sombre</span>
+                        </button>
+                        <button onclick="setTheme('light')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500 transition-all">
+                            <i class="fa-solid fa-sun text-yellow-400"></i> 
+                            <span class="text-sm font-medium">Clair</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Zone dangereuse -->
+                <div class="pt-6 border-t border-zinc-700">
+                    <div class="flex items-center gap-x-2 mb-4">
+                        <i class="fa-solid fa-exclamation-triangle text-red-400"></i>
+                        <h4 class="font-semibold text-red-400">Zone dangereuse</h4>
+                    </div>
+                    
+                    <button onclick="deleteCurrentProfile()" 
+                            class="w-full flex items-center justify-center gap-x-2 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-sm font-semibold transition-all">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>Supprimer mon profil définitivement</span>
                     </button>
                 </div>
 
             </div>
 
-            <button onclick="saveSettings()" class="mt-8 w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">Enregistrer les modifications</button>
+            <!-- Footer -->
+            <div class="px-8 py-6 border-t border-zinc-700 bg-zinc-900/50">
+                <button onclick="saveSettings()" 
+                        class="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-2xl flex items-center justify-center gap-x-2 transition-all active:scale-[0.985]">
+                    <i class="fa-solid fa-save"></i>
+                    <span>Enregistrer les modifications</span>
+                </button>
+            </div>
+            
         </div>
     </div>
 
@@ -528,29 +654,58 @@
         function loadProfilesList() {
             const container = document.getElementById('profiles-list');
             const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+            const countEl = document.getElementById('profile-count');
+            
+            if (countEl) countEl.innerHTML = `${profiles.length} profil${profiles.length > 1 ? 's' : ''}`;
             
             if (profiles.length === 0) {
-                container.innerHTML = '<p class="text-zinc-400 text-sm">Aucun profil créé</p>';
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 border border-dashed border-zinc-700 rounded-3xl">
+                        <i class="fa-solid fa-user-circle text-6xl text-zinc-700 mb-4"></i>
+                        <p class="text-zinc-400">Aucun profil pour le moment</p>
+                        <p class="text-xs text-zinc-500 mt-1">Cliquez sur "Créer un nouveau profil" pour commencer</p>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = '<p class="text-sm text-zinc-400 mb-3">Ou sélectionnez un profil :</p>';
+            container.innerHTML = '';
             
             profiles.forEach(profile => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 rounded-2xl px-4 py-3 mb-2 cursor-pointer';
-                div.innerHTML = `
-                    <div class="flex items-center gap-x-3">
-                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">${profile.name.charAt(0)}</div>
-                        <div>
-                            <div class="font-semibold">${profile.name}</div>
-                            <div class="text-xs text-zinc-400">${profile.company || ''}</div>
+                const card = document.createElement('div');
+                card.className = 'group bg-zinc-900 border border-zinc-700 hover:border-orange-500/50 rounded-3xl p-5 cursor-pointer transition-all hover:-translate-y-0.5';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-inner flex-shrink-0">
+                                ${profile.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-semibold text-lg text-white group-hover:text-orange-400 transition-colors">${profile.name}</div>
+                                <div class="text-xs text-zinc-500 truncate">${profile.company || 'Architecte / Ingénieur'}</div>
+                            </div>
                         </div>
+                        
+                        <button onclick="deleteProfile('${profile.id}', event)" 
+                                class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-500 p-1 transition-all">
+                            <i class="fa-solid fa-trash text-sm"></i>
+                        </button>
                     </div>
-                    <button onclick="selectProfile('${profile.id}'); event.stopImmediatePropagation();" class="px-4 py-1 bg-orange-500 text-white text-sm rounded-xl">Ouvrir</button>
+                    
+                    <div class="mt-6 flex items-center justify-between">
+                        <div class="text-[10px] text-zinc-500 font-mono">
+                            ${new Date(profile.created || Date.now()).toLocaleDateString('fr-FR')}
+                        </div>
+                        
+                        <button onclick="selectProfile('${profile.id}'); event.stopImmediatePropagation();" 
+                                class="px-5 py-1.5 text-xs font-semibold bg-white text-black hover:bg-orange-500 hover:text-white rounded-2xl transition-all flex items-center gap-x-1.5 active:scale-[0.985]">
+                            <span>OUVRIR</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
                 `;
-                div.onclick = () => selectProfile(profile.id);
-                container.appendChild(div);
+                card.onclick = () => selectProfile(profile.id);
+                container.appendChild(card);
             });
         }
 
@@ -564,6 +719,128 @@
             document.getElementById('create-profile-modal').classList.add('hidden');
         }
 
+        function hidePasswordPrompt() {
+            document.getElementById('password-prompt-modal').classList.remove('flex');
+            document.getElementById('password-prompt-modal').classList.add('hidden');
+            window.pendingProfile = null;
+        }
+
+        function submitPassword() {
+            const enteredPassword = document.getElementById('password-input').value;
+            const profile = window.pendingProfile;
+
+            if (!profile) return;
+
+            if (enteredPassword === profile.password) {
+                // Mot de passe correct → on entre dans l'app
+                hidePasswordPrompt();
+                
+                document.getElementById('home-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+
+                document.getElementById('profile-name').innerHTML = profile.name;
+                document.getElementById('profile-avatar').innerHTML = profile.name.charAt(0);
+
+                // Continuer le chargement normal
+                let savedProjects = localStorage.getItem('dimensionspro_all_projects');
+                projects = savedProjects ? JSON.parse(savedProjects) : [];
+                
+                updateHonoraires();
+                initEstimation();
+                calculateSurfaces();
+                renderPhasesTable();
+                switchTab(1);
+            } else {
+                alert("❌ Mot de passe incorrect");
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-input').focus();
+            }
+        }
+
+        async function deleteProfile(profileId, event) {
+            event.stopImmediatePropagation();
+            if (!confirm("Supprimer ce profil définitivement ?")) return;
+
+            // Supprimer de localStorage
+            let profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+            profiles = profiles.filter(p => p.id !== profileId);
+            localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
+
+            // Supprimer de Firebase
+            await deleteProfileFromFirestore(profileId);
+
+            // Rafraîchir la liste
+            loadProfilesList();
+
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-2xl';
+            toast.innerHTML = `🗑️ Profil supprimé`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function showProfileActionsMenu() {
+            const existing = document.getElementById('profile-actions-menu');
+            if (existing) existing.remove();
+
+            const menu = document.createElement('div');
+            menu.id = 'profile-actions-menu';
+            menu.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-xl py-2 w-64 z-[99999]';
+            menu.innerHTML = `
+                <div class="px-4 py-2 text-xs text-zinc-400 border-b border-zinc-700">Actions sur les profils</div>
+                
+                <button onclick="deleteAllProfiles(); document.getElementById('profile-actions-menu').remove();" 
+                        class="w-full px-4 py-3 flex items-center gap-x-3 hover:bg-red-950 text-red-400 text-sm">
+                    <i class="fa-solid fa-trash w-4"></i>
+                    <span>Supprimer tous les profils</span>
+                </button>
+                
+                <button onclick="document.getElementById('profile-actions-menu').remove()" 
+                        class="w-full px-4 py-3 flex items-center gap-x-3 hover:bg-zinc-800 text-zinc-400 text-sm">
+                    <i class="fa-solid fa-times w-4"></i>
+                    <span>Annuler</span>
+                </button>
+            `;
+            document.body.appendChild(menu);
+
+            // Fermer si on clique ailleurs
+            setTimeout(() => {
+                document.addEventListener('click', function handler(e) {
+                    if (!menu.contains(e.target)) {
+                        menu.remove();
+                        document.removeEventListener('click', handler);
+                    }
+                }, { once: true });
+            }, 100);
+        }
+
+        async function deleteAllProfiles() {
+            if (!confirm("⚠️ Supprimer TOUS les profils définitivement ?\nCette action est irréversible.")) return;
+
+            let profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+            if (profiles.length === 0) {
+                alert("Aucun profil à supprimer.");
+                return;
+            }
+
+            // Supprimer de Firebase un par un
+            for (const profile of profiles) {
+                await deleteProfileFromFirestore(profile.id);
+            }
+
+            // Vider localStorage
+            localStorage.setItem('dimensionspro_profiles', '[]');
+
+            // Rafraîchir l'interface
+            loadProfilesList();
+
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-2xl';
+            toast.innerHTML = `🗑️ Tous les profils ont été supprimés`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
         async function createProfile() {
             const name = document.getElementById('profile-name-input').value.trim();
 
@@ -572,9 +849,12 @@
                 return;
             }
 
+            const password = document.getElementById('profile-password-input').value.trim();
+
             const profile = {
                 id: 'profile_' + Date.now(),
                 name: name,
+                password: password || null,   // ← mot de passe optionnel
                 created: new Date().toISOString()
             };
 
@@ -598,9 +878,38 @@
             
             if (!profile) return;
 
-            // Show main app
+            // Vérifier le mot de passe si le profil en a un
+            if (profile.password) {
+                // Stocker temporairement le profil en attente
+                window.pendingProfile = profile;
+                
+                // Afficher la modale de mot de passe
+                document.getElementById('password-profile-name').innerHTML = `Profil : <strong>${profile.name}</strong>`;
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-prompt-modal').classList.remove('hidden');
+                document.getElementById('password-prompt-modal').classList.add('flex');
+                
+                // Focus sur le champ mot de passe
+                setTimeout(() => {
+                    document.getElementById('password-input').focus();
+                }, 100);
+                
+                return; // On attend que l'utilisateur entre le mot de passe
+            }
+
+            // Show main app with nice transition
             document.getElementById('home-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
+            
+            const mainApp = document.getElementById('main-app');
+            mainApp.classList.remove('hidden');
+            mainApp.style.opacity = '0';
+            mainApp.style.transform = 'scale(0.98)';
+            
+            setTimeout(() => {
+                mainApp.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                mainApp.style.opacity = '1';
+                mainApp.style.transform = 'scale(1)';
+            }, 50);
 
             // Set profile info in header
             document.getElementById('profile-name').innerHTML = profile.name;
@@ -625,8 +934,8 @@
             calculateSurfaces();
             renderPhasesTable();
 
-            // Show first tab
-            switchTab(0);
+            // Show Projets tab by default
+            switchTab(1);
         }
 
         function logout() {
@@ -1111,9 +1420,31 @@
             const profile = profiles.find(p => p.id === currentProfile);
             if (!profile) return;
 
-            document.getElementById('settings-nom').value = profile.nom || '';
+            document.getElementById('settings-nom').value = profile.nom || profile.name || '';
             document.getElementById('settings-prenom').value = profile.prenom || '';
             document.getElementById('settings-telephone').value = profile.telephone || '';
+
+            // Avatar
+            const initialEl = document.getElementById('settings-avatar-initial');
+            const imgEl = document.getElementById('settings-avatar-img');
+            
+            if (profile.avatar) {
+                imgEl.src = profile.avatar;
+                imgEl.classList.remove('hidden');
+                initialEl.classList.add('hidden');
+            } else {
+                initialEl.textContent = (profile.nom || profile.name || 'A').charAt(0).toUpperCase();
+                imgEl.classList.add('hidden');
+                initialEl.classList.remove('hidden');
+            }
+
+            // Password status
+            const passStatus = document.getElementById('password-status');
+            if (profile.password) {
+                passStatus.innerHTML = `<span class="text-emerald-400">✓ Défini</span>`;
+            } else {
+                passStatus.innerHTML = `Non défini`;
+            }
 
             document.getElementById('settings-modal').classList.remove('hidden');
             document.getElementById('settings-modal').classList.add('flex');
@@ -1122,6 +1453,24 @@
         function closeSettingsModal() {
             document.getElementById('settings-modal').classList.remove('flex');
             document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function previewAvatar(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgEl = document.getElementById('settings-avatar-img');
+                const initialEl = document.getElementById('settings-avatar-initial');
+                
+                imgEl.src = e.target.result;
+                imgEl.classList.remove('hidden');
+                initialEl.classList.add('hidden');
+                
+                // Stocker temporairement pour la sauvegarde
+                window.tempAvatar = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
         }
 
         function saveSettings() {
@@ -1133,10 +1482,24 @@
             profiles[profileIndex].prenom = document.getElementById('settings-prenom').value.trim();
             profiles[profileIndex].telephone = document.getElementById('settings-telephone').value.trim();
 
+            // Sauvegarder la photo si elle a été changée
+            if (window.tempAvatar) {
+                profiles[profileIndex].avatar = window.tempAvatar;
+                window.tempAvatar = null;
+            }
+
             localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
             
-            // Update header name
+            // Update header name + avatar
             document.getElementById('profile-name').innerHTML = profiles[profileIndex].nom || profiles[profileIndex].name;
+            
+            // Mettre à jour l'avatar dans le header si on est connecté
+            const avatarContainer = document.getElementById('profile-avatar');
+            if (avatarContainer && profiles[profileIndex].avatar) {
+                avatarContainer.innerHTML = `<img src="${profiles[profileIndex].avatar}" class="w-full h-full object-cover rounded-xl">`;
+            } else if (avatarContainer) {
+                avatarContainer.innerHTML = (profiles[profileIndex].nom || profiles[profileIndex].name || 'A').charAt(0);
+            }
 
             closeSettingsModal();
             
@@ -2146,6 +2509,14 @@
             try {
                 await db.collection('planning').doc(task.id).set(task, { merge: true });
             } catch (e) { console.error("[Firebase] savePlanning:", e); }
+        }
+
+        async function deleteProfileFromFirestore(profileId) {
+            if (!isFirebaseReady || !db) return;
+            try {
+                await db.collection('profiles').doc(profileId).delete();
+                console.log("%c[Firebase] Profil supprimé: " + profileId, "color:#ef4444");
+            } catch (e) { console.error("[Firebase] deleteProfile:", e); }
         }
 
         // ==================== FIN FIREBASE ====================
