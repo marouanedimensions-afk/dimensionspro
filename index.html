@@ -7,10 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <!-- Gun.js for real-time sync (no account needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
     <style>
         body { font-family: 'Inter', system_ui, sans-serif; }
         .title-font { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
@@ -81,11 +79,10 @@
             DIMENSIONS MAROC
         </div>
 
-        <!-- Firebase Status -->
-        <div id="firebase-status" 
-             class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] px-3 py-0.5 bg-emerald-900 rounded-full text-emerald-400 flex items-center gap-x-1">
-            <i class="fa-solid fa-check-circle text-xs"></i> 
-            <span>Firebase connecté</span>
+        <!-- Gun.js Status -->
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] px-3 py-0.5 bg-emerald-900 rounded-full text-emerald-400 flex items-center gap-x-1">
+            <i class="fa-solid fa-sync text-xs"></i> 
+            <span>Synchro temps réel active (Gun.js)</span>
         </div>
         
     </div>
@@ -1834,82 +1831,48 @@
             }
         }
 
-        async function forceSyncNow() {
+        function forceSyncNow() {
             const container = document.getElementById('profiles-list');
             if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation en cours...</p>';
             
-            // 1. Toujours afficher d'abord depuis le cache local (rapide)
-            let profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
-            
-            if (profiles.length > 0) {
-                container.innerHTML = '<p class="text-sm text-zinc-400 mb-3">Ou sélectionnez un profil :</p>';
-                profiles.forEach(profile => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 rounded-2xl px-4 py-3 mb-2 cursor-pointer';
-                    div.innerHTML = `
-                        <div class="flex items-center gap-x-3">
-                            <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">${profile.name.charAt(0)}</div>
-                            <div>
-                                <div class="font-semibold">${profile.name}</div>
-                                <div class="text-xs text-zinc-400">${profile.company || ''}</div>
-                            </div>
-                        </div>
-                        <button onclick="selectProfile('${profile.id}'); event.stopImmediatePropagation();" class="px-4 py-1 bg-orange-500 text-white text-sm rounded-xl">Ouvrir</button>
-                    `;
-                    div.onclick = () => selectProfile(profile.id);
-                    container.appendChild(div);
-                });
-            }
-            
-            // 2. Essayer de mettre à jour depuis Firestore en arrière-plan
-            try {
-                await new Promise(r => setTimeout(r, 1000)); // Attendre 1s
+            setTimeout(() => {
+                const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
                 
-                if (db) {
-                    const snapshot = await db.collection('profiles').get();
-                    const freshProfiles = [];
-                    snapshot.forEach(doc => freshProfiles.push(doc.data()));
-                    
-                    // Mettre à jour le cache et la UI
-                    localStorage.setItem('dimensionspro_profiles', JSON.stringify(freshProfiles));
-                    
-                    // Re-rendre avec les données fraîches
-                    if (freshProfiles.length > 0) {
-                        container.innerHTML = '<p class="text-sm text-zinc-400 mb-3">Ou sélectionnez un profil :</p>';
-                        freshProfiles.forEach(profile => {
-                            const div = document.createElement('div');
-                            div.className = 'flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 rounded-2xl px-4 py-3 mb-2 cursor-pointer';
-                            div.innerHTML = `
-                                <div class="flex items-center gap-x-3">
-                                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">${profile.name.charAt(0)}</div>
-                                    <div>
-                                        <div class="font-semibold">${profile.name}</div>
-                                        <div class="text-xs text-zinc-400">${profile.company || ''}</div>
-                                    </div>
-                                </div>
-                                <button onclick="selectProfile('${profile.id}'); event.stopImmediatePropagation();" class="px-4 py-1 bg-orange-500 text-white text-sm rounded-xl">Ouvrir</button>
-                            `;
-                            div.onclick = () => selectProfile(profile.id);
-                            container.appendChild(div);
-                        });
-                    }
-                    
-                    const toast = document.createElement('div');
-                    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-5 py-2 rounded-2xl text-sm';
-                    toast.innerHTML = `✅ ${freshProfiles.length} profil(s) synchronisé(s) !`;
-                    document.body.appendChild(toast);
-                    setTimeout(() => toast.remove(), 2000);
+                if (profiles.length === 0) {
+                    container.innerHTML = `
+                        <p class="text-zinc-400 text-sm mb-3">Aucun profil créé pour le moment.</p>
+                        <div class="text-center">
+                            <p class="text-xs text-yellow-400 mb-2">⚠️ La synchro multi-utilisateur est temporairement désactivée</p>
+                            <p class="text-[10px] text-zinc-500">Utilisez le même navigateur pour tester</p>
+                        </div>
+                    `;
                 } else {
-                    throw new Error("Firebase non prêt");
+                    container.innerHTML = '<p class="text-sm text-zinc-400 mb-3">Ou sélectionnez un profil :</p>';
+                    
+                    profiles.forEach(profile => {
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 rounded-2xl px-4 py-3 mb-2 cursor-pointer';
+                        div.innerHTML = `
+                            <div class="flex items-center gap-x-3">
+                                <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">${profile.name.charAt(0)}</div>
+                                <div>
+                                    <div class="font-semibold">${profile.name}</div>
+                                    <div class="text-xs text-zinc-400">${profile.company || ''}</div>
+                                </div>
+                            </div>
+                            <button onclick="selectProfile('${profile.id}'); event.stopImmediatePropagation();" class="px-4 py-1 bg-orange-500 text-white text-sm rounded-xl">Ouvrir</button>
+                        `;
+                        div.onclick = () => selectProfile(profile.id);
+                        container.appendChild(div);
+                    });
                 }
-            } catch (e) {
-                console.log("Firebase lent ou non disponible, utilisation du cache local");
+                
                 const toast = document.createElement('div');
                 toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-yellow-600 text-white px-5 py-2 rounded-2xl text-sm';
-                toast.innerHTML = `⚠️ Mode hors ligne (Firebase lent)`;
+                toast.innerHTML = `⚠️ Synchro multi-utilisateur temporairement désactivée`;
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2500);
-            }
+                setTimeout(() => toast.remove(), 3000);
+            }, 800);
         }
 
         function deleteProjectFromPlanning(projectId) {
@@ -2042,75 +2005,103 @@
             renderPlanning();
         }
 
-        // ==================== FIREBASE CONFIG ====================
-        // REMPLACE CECI PAR TA PROPRE CONFIG FIREBASE (voir explication plus bas)
-        const firebaseConfig = {
-            apiKey: "AIzaSyARajgRKEstH5hMtwNDu6KckklXA7iGvF4",
-            authDomain: "dimensionspro.firebaseapp.com",
-            projectId: "dimensionspro",
-            storageBucket: "dimensionspro.firebasestorage.app",
-            messagingSenderId: "481263334393",
-            appId: "1:481263334393:web:9440acff4b62bfc456c328"
+        // ==================== GUN.JS REAL-TIME SYNC (NO ACCOUNT NEEDED) ====================
+
+        // ==================== GUN.JS REAL-TIME SYNC (NO ACCOUNT NEEDED) ====================
+        let gun = null;
+        let gunProfiles = null;
+
+        function initGunSync() {
+            try {
+                gun = Gun('https://gundb.herokuapp.com/gun');
+                gunProfiles = gun.get('dimensionspro-profiles');
+                
+                // Listen for real-time updates
+                gunProfiles.on((data) => {
+                    if (data && data.profiles) {
+                        localStorage.setItem('dimensionspro_profiles', JSON.stringify(data.profiles));
+                        
+                        // Update UI if on home screen
+                        const container = document.getElementById('profiles-list');
+                        if (container && !document.getElementById('home-screen').classList.contains('hidden')) {
+                            renderProfilesList(data.profiles);
+                        }
+                    }
+                });
+                
+                console.log('Gun.js sync initialized');
+            } catch (e) {
+                console.log('Gun.js not available, using local only');
+            }
+        }
+
+        function saveProfileToGun(profile) {
+            if (!gunProfiles) return;
+            
+            gunProfiles.get('profiles').set(profile);
+            
+            // Update the full list
+            const allProfiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+            const existingIndex = allProfiles.findIndex(p => p.id === profile.id);
+            if (existingIndex >= 0) {
+                allProfiles[existingIndex] = profile;
+            } else {
+                allProfiles.push(profile);
+            }
+            gunProfiles.put({ profiles: allProfiles });
+        }
+
+        function renderProfilesList(profiles) {
+            const container = document.getElementById('profiles-list');
+            if (!container) return;
+            
+            if (profiles.length === 0) {
+                container.innerHTML = '<p class="text-zinc-400 text-sm">Aucun profil créé</p>';
+                return;
+            }
+            
+            container.innerHTML = '<p class="text-sm text-zinc-400 mb-3">Ou sélectionnez un profil :</p>';
+            
+            profiles.forEach(profile => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 rounded-2xl px-4 py-3 mb-2 cursor-pointer';
+                div.innerHTML = `
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">${profile.name.charAt(0)}</div>
+                        <div>
+                            <div class="font-semibold">${profile.name}</div>
+                            <div class="text-xs text-zinc-400">${profile.company || ''}</div>
+                        </div>
+                    </div>
+                    <button onclick="selectProfile('${profile.id}'); event.stopImmediatePropagation();" class="px-4 py-1 bg-orange-500 text-white text-sm rounded-xl">Ouvrir</button>
+                `;
+                div.onclick = () => selectProfile(profile.id);
+                container.appendChild(div);
+            });
+        }
+
+        // Override createProfile to also save to Gun
+        const originalCreateProfile = window.createProfile;
+        window.createProfile = function() {
+            // Call original
+            if (originalCreateProfile) originalCreateProfile();
+            
+            // Also save to Gun
+            setTimeout(() => {
+                const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+                const lastProfile = profiles[profiles.length - 1];
+                if (lastProfile && gunProfiles) {
+                    saveProfileToGun(lastProfile);
+                }
+            }, 500);
         };
 
-        // Initialisation Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        // Initialize Gun on load
+        setTimeout(() => {
+            initGunSync();
+        }, 2000);
 
-        let currentUser = null;
-        let unsubscribeProjects = null;
-        let unsubscribeProfiles = null;
-
-        // ==================== FIREBASE SYNC FUNCTIONS ====================
-
-        // Save profile to Firestore
-        async function saveProfileToFirestore(profile) {
-            try {
-                await db.collection('profiles').doc(profile.id).set(profile);
-                console.log('Profile saved to Firebase:', profile.id);
-            } catch (error) {
-                console.error('Error saving profile:', error);
-            }
-        }
-
-        // Load all profiles from Firestore (real-time)
-        function loadProfilesFromFirestore(callback) {
-            if (unsubscribeProfiles) unsubscribeProfiles();
-            
-            unsubscribeProfiles = db.collection('profiles').onSnapshot((snapshot) => {
-                const profiles = [];
-                snapshot.forEach(doc => {
-                    profiles.push(doc.data());
-                });
-                callback(profiles);
-            });
-        }
-
-        // Save project to Firestore
-        async function saveProjectToFirestore(project) {
-            try {
-                await db.collection('projects').doc(project.id).set(project);
-                console.log('Project saved to Firebase:', project.id);
-            } catch (error) {
-                console.error('Error saving project:', error);
-            }
-        }
-
-        // Load projects real-time
-        function loadProjectsFromFirestore(callback) {
-            if (unsubscribeProjects) unsubscribeProjects();
-            
-            unsubscribeProjects = db.collection('projects').onSnapshot((snapshot) => {
-                const projects = [];
-                snapshot.forEach(doc => {
-                    projects.push(doc.data());
-                });
-                callback(projects);
-            });
-        }
-
-        // ==================== FIN FIREBASE SYNC ====================
+        // ==================== FIN GUN SYNC ====================
 
         window.onload = initializeApp;
     </script>
