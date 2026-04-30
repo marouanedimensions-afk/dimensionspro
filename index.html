@@ -65,11 +65,26 @@
             <!-- Existing profiles -->
             <div id="profiles-list" class="text-left"></div>
             
+            <!-- Bouton Rafraîchir -->
+            <button onclick="forceSyncNow()" 
+                    class="mt-4 w-full py-3 text-sm bg-zinc-700 hover:bg-orange-600 text-white rounded-2xl flex items-center justify-center gap-x-2 font-semibold shadow-lg">
+                <i class="fa-solid fa-sync"></i> 
+                <span>Rafraîchir</span>
+            </button>
+            <p class="text-[10px] text-zinc-500 mt-1 text-center">Clique ici pour voir les profils et tâches de ton ami</p>
+            
         </div>
         
         <!-- Bottom bar -->
         <div class="absolute bottom-8 text-center text-sm font-bold tracking-[4px] text-orange-500">
             DIMENSIONS MAROC
+        </div>
+
+        <!-- Firebase Status -->
+        <div id="firebase-status" 
+             class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] px-3 py-0.5 bg-emerald-900 rounded-full text-emerald-400 flex items-center gap-x-1">
+            <i class="fa-solid fa-check-circle text-xs"></i> 
+            <span>Firebase connecté</span>
         </div>
         
     </div>
@@ -1777,6 +1792,29 @@
             setTimeout(() => {
                 if (currentProfile) updateNotificationBadge();
             }, 1000);
+        }
+
+        async function forceSyncNow() {
+            const container = document.getElementById('profiles-list');
+            if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation...</p>';
+            
+            try {
+                await loadProfilesList();
+                
+                const snap = await db.collection('planning').get();
+                const planning = [];
+                snap.forEach(d => planning.push(d.data()));
+                localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planning));
+                
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-5 py-2 rounded-2xl text-sm';
+                toast.innerHTML = `✅ Synchronisé !`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 1800);
+            } catch (e) {
+                console.error(e);
+                alert("Erreur synchro");
+            }
         }
 
         function deleteProjectFromPlanning(projectId) {
