@@ -1801,10 +1801,15 @@
             try {
                 await loadProfilesList();
                 
-                const snap = await db.collection('planning').get();
-                const planning = [];
-                snap.forEach(d => planning.push(d.data()));
-                localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planning));
+                // Sync planning (optionnel - ne bloque pas si ça échoue)
+                try {
+                    const snap = await db.collection('planning').get();
+                    const planning = [];
+                    snap.forEach(d => planning.push(d.data()));
+                    localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planning));
+                } catch (e) {
+                    console.log("Planning sync ignoré (collection vide ou règles)");
+                }
                 
                 const toast = document.createElement('div');
                 toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-5 py-2 rounded-2xl text-sm';
@@ -1813,7 +1818,7 @@
                 setTimeout(() => toast.remove(), 1800);
             } catch (e) {
                 console.error(e);
-                alert("Erreur synchro");
+                alert("Erreur synchro (réessaie dans 10 secondes)");
             }
         }
 
