@@ -1838,8 +1838,12 @@
             if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation en cours...</p>';
             
             try {
-                // Attendre un peu pour que Firebase soit prêt
-                await new Promise(r => setTimeout(r, 800));
+                // Attendre que Firebase soit prêt
+                await new Promise(r => setTimeout(r, 1500));
+                
+                if (!db) {
+                    throw new Error("Firebase non initialisé");
+                }
                 
                 // Fetch profils directement depuis Firestore
                 const snapshot = await db.collection('profiles').get();
