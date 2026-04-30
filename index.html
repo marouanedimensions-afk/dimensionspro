@@ -580,31 +580,50 @@
             document.getElementById('create-profile-modal').classList.add('hidden');
         }
 
-        async function createProfile() {
-            const name = document.getElementById('profile-name-input').value.trim();
+        function createProfile() {
+            try {
+                const name = document.getElementById('profile-name-input').value.trim();
 
-            if (!name) {
-                alert("Veuillez entrer un nom");
-                return;
+                if (!name) {
+                    alert("Veuillez entrer un nom");
+                    return;
+                }
+
+                const profile = {
+                    id: 'profile_' + Date.now(),
+                    name: name,
+                    created: new Date().toISOString()
+                };
+
+                // Save to localStorage
+                let profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+                
+                // Ensure profiles is an array
+                if (!Array.isArray(profiles)) {
+                    profiles = [];
+                }
+                
+                profiles.push(profile);
+                localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
+
+                // Save to Gun.js (real-time sync)
+                if (typeof saveProfileToGun === 'function') {
+                    saveProfileToGun(profile);
+                }
+
+                hideCreateProfileModal();
+                
+                // Refresh the profiles list
+                if (typeof loadProfilesList === 'function') {
+                    loadProfilesList();
+                }
+                
+                // Select the new profile
+                selectProfile(profile.id);
+            } catch (e) {
+                console.error("Erreur createProfile:", e);
+                alert("Erreur lors de la création du profil: " + e.message);
             }
-
-            const profile = {
-                id: 'profile_' + Date.now(),
-                name: name,
-                created: new Date().toISOString()
-            };
-
-            // Save to localStorage
-            let profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
-            profiles.push(profile);
-            localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
-
-            // Save to Firebase
-            await saveProfileToFirestore(profile);
-
-            hideCreateProfileModal();
-            loadProfilesList();
-            selectProfile(profile.id);
         }
 
         function selectProfile(profileId) {
@@ -1304,25 +1323,38 @@
         }
 
         function showPlanningModal() {
+            const modal = document.getElementById('planning-modal');
+            if (!modal) {
+                alert("Erreur: Modal de planification non trouvée");
+                return;
+            }
+
             // Load all profiles
             const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
             const container = document.getElementById('planning-profiles-list');
-            container.innerHTML = '';
+            
+            if (container) {
+                container.innerHTML = '';
 
-            profiles.forEach(profile => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-x-3 p-2 hover:bg-zinc-800 rounded-xl cursor-pointer';
-                div.innerHTML = `
-                    <input type="checkbox" id="profile-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500">
-                    <label for="profile-${profile.id}" class="flex-1 cursor-pointer">
-                        <div class="font-medium">${profile.nom || profile.name} ${profile.prenom || ''}</div>
-                    </label>
-                `;
-                container.appendChild(div);
-            });
+                if (profiles.length === 0) {
+                    container.innerHTML = '<p class="text-sm text-zinc-400 p-2">Aucun profil disponible. Créez d\'abord un profil.</p>';
+                } else {
+                    profiles.forEach(profile => {
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center gap-x-3 p-2 hover:bg-zinc-800 rounded-xl cursor-pointer';
+                        div.innerHTML = `
+                            <input type="checkbox" id="profile-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500">
+                            <label for="profile-${profile.id}" class="flex-1 cursor-pointer">
+                                <div class="font-medium">${profile.nom || profile.name} ${profile.prenom || ''}</div>
+                            </label>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            }
 
-            document.getElementById('planning-modal').classList.remove('hidden');
-            document.getElementById('planning-modal').classList.add('flex');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closePlanningModal() {
