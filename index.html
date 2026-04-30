@@ -519,18 +519,36 @@
         let projects = []; // Global shared projects list
 
         // HOME SCREEN
-        function showHomeScreen() {
+        async function showHomeScreen() {
             document.getElementById('home-screen').classList.remove('hidden');
             document.getElementById('main-app').classList.add('hidden');
-            loadProfilesList();
+            await loadProfilesList();
         }
 
-        function loadProfilesList() {
+        async function loadProfilesList() {
             const container = document.getElementById('profiles-list');
-            const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
-            
+            if (!container) return;
+
+            container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Chargement des profils...</p>';
+
+            let profiles = [];
+            try {
+                const snapshot = await db.collection('profiles').get();
+                snapshot.forEach(doc => profiles.push(doc.data()));
+                localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
+            } catch (e) {
+                console.error("Erreur chargement profils:", e);
+                profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+            }
+
             if (profiles.length === 0) {
-                container.innerHTML = '<p class="text-zinc-400 text-sm">Aucun profil créé</p>';
+                container.innerHTML = `
+                    <p class="text-zinc-400 text-sm mb-3">Aucun profil créé pour le moment.</p>
+                    <button onclick="forceSyncNow()" 
+                            class="text-xs px-3 py-1 bg-zinc-700 hover:bg-zinc-600 rounded-xl flex items-center gap-x-1 mx-auto">
+                        <i class="fa-solid fa-sync fa-xs"></i> <span>Rafraîchir</span>
+                    </button>
+                `;
                 return;
             }
 
@@ -1205,8 +1223,8 @@
             months.forEach((monthName, monthIndex) => {
                 const monthTasks = myTasks.filter(t => {
                     if (!t.date) return false;
-                    const taskDate = new Date(t.date);
-                    return taskDate.getFullYear() === currentPlanningYear && taskDate.getMonth() === monthIndex;
+                    const [y, m] = t.date.split('-').map(Number);
+                    return y === currentPlanningYear && (m - 1) === monthIndex;
                 });
 
                 const monthHTML = `
@@ -1219,7 +1237,7 @@
                         <div class="flex flex-wrap gap-2">
                             ${monthTasks.length > 0 ? 
                                 monthTasks.slice(0, 3).map(task => `
-                                    <div class="text-xs bg-zinc-900 px-2 py-1 rounded">${new Date(task.date).getDate()}</div>
+                                    <div class="text-xs bg-zinc-900 px-2 py-1 rounded">${task.date.split('-')[2]}</div>
                                 `).join('') : 
                                 '<span class="text-xs text-zinc-500">Aucune tâche</span>'
                             }
@@ -1241,8 +1259,8 @@
             const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
             const myTasks = allPlanning.filter(task => {
                 if (!task.date) return false;
-                const taskDate = new Date(task.date);
-                return taskDate.getFullYear() === currentPlanningYear && taskDate.getMonth() === monthIndex;
+                const [y, m] = task.date.split('-').map(Number);
+                return y === currentPlanningYear && (m - 1) === monthIndex;
             });
 
             const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
@@ -1262,7 +1280,10 @@
 
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
                         ${Array.from({length: 31}, (_, i) => i + 1).map(day => {
-                            const dayTasks = myTasks.filter(t => new Date(t.date).getDate() === day);
+                            const dayTasks = myTasks.filter(t => {
+                                if (!t.date) return false;
+                                return parseInt(t.date.split('-')[2]) === day;
+                            });
                             return `
                                 <div class="border border-zinc-700 rounded-2xl p-4 min-h-[100px]">
                                     <div class="font-bold text-lg mb-3 flex items-center justify-between">
@@ -1322,9 +1343,8 @@
                 return;
             }
 
-            // Create date
-            const date = new Date(year, month, day);
-            const dateString = date.toISOString().split('T')[0];
+            // Create date (no timezone shift)
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
             // Get selected profiles
             const checkboxes = document.querySelectorAll('#planning-profiles-list input[type="checkbox"]:checked');
@@ -1796,29 +1816,31 @@
 
         async function forceSyncNow() {
             const container = document.getElementById('profiles-list');
-            if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation...</p>';
+            if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation en cours...</p>';
             
             try {
                 await loadProfilesList();
                 
-                // Sync planning (optionnel - ne bloque pas si ça échoue)
+                // Sync planning (optionnel)
                 try {
                     const snap = await db.collection('planning').get();
                     const planning = [];
                     snap.forEach(d => planning.push(d.data()));
                     localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planning));
-                } catch (e) {
-                    console.log("Planning sync ignoré (collection vide ou règles)");
-                }
+                } catch (e) {}
                 
                 const toast = document.createElement('div');
                 toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-5 py-2 rounded-2xl text-sm';
-                toast.innerHTML = `✅ Synchronisé !`;
+                toast.innerHTML = `✅ Profils synchronisés !`;
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 1800);
+                setTimeout(() => toast.remove(), 2000);
             } catch (e) {
                 console.error(e);
-                alert("Erreur synchro (réessaie dans 10 secondes)");
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-5 py-2 rounded-2xl text-sm';
+                toast.innerHTML = `⚠️ Erreur - Vérifie ta connexion`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             }
         }
 
