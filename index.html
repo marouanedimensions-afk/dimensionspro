@@ -1808,10 +1808,29 @@
             // Show home screen on load
             showHomeScreen();
             
+            // Activer la synchro temps réel Firebase
+            if (typeof setupFirebaseSync === 'function') {
+                setupFirebaseSync();
+            }
+            
             // Update notification badge when app loads
             setTimeout(() => {
                 if (currentProfile) updateNotificationBadge();
             }, 1000);
+        }
+
+        function setupFirebaseSync() {
+            // Real-time listener for profiles
+            if (typeof loadProfilesFromFirestore === 'function') {
+                loadProfilesFromFirestore((profiles) => {
+                    localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
+                    const container = document.getElementById('profiles-list');
+                    if (container && !document.getElementById('home-screen').classList.contains('hidden')) {
+                        // Refresh the list if we're on the home screen
+                        loadProfilesList();
+                    }
+                });
+            }
         }
 
         async function forceSyncNow() {
