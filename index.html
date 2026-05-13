@@ -161,89 +161,277 @@
             </div>
 
             <div id="tool-content">
-                <!-- HONORAIRES -->
+                <!-- HONORAIRES - Design Sophistiqué -->
                 <div id="tool-honoraires-content" class="tool-content active">
-                    <div class="max-w-2xl mx-auto">
-                        <div class="text-center mb-6"><h2 class="text-3xl font-bold">Calculateur d'Honoraires</h2></div>
-                        <div class="glass rounded-3xl p-8 border border-zinc-800">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                <div>
-                                    <label class="block text-sm font-semibold text-zinc-300 mb-2">Budget du projet (MAD)</label>
-                                    <input type="number" id="budget" value="500000" oninput="updateHonoraires()" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 text-3xl font-semibold">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-zinc-300 mb-2">Taux TVA (%)</label>
-                                    <input type="number" id="tva" value="20" step="0.1" oninput="updateHonoraires()" class="w-24 bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-4 text-3xl font-semibold">
-                                </div>
+                    <div class="max-w-3xl mx-auto">
+                        <!-- Header -->
+                        <div class="text-center mb-8">
+                            <div class="inline-flex items-center gap-x-3 bg-white rounded-2xl px-6 py-2 shadow-sm border border-zinc-200">
+                                <i class="fa-solid fa-calculator text-orange-500 text-2xl"></i>
+                                <h2 class="text-3xl font-bold text-zinc-900 tracking-tight">Calculateur d'Honoraires</h2>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
-                                    <div class="text-sm text-zinc-400">Honoraires HT</div>
-                                    <div id="honoraires" class="text-4xl font-bold text-orange-400 mt-2">60 000</div>
-                                </div>
-                                <div class="bg-zinc-900 rounded-2xl p-5 border border-zinc-800">
-                                    <div class="text-sm text-zinc-400">TVA</div>
-                                    <div id="tvaAmount" class="text-4xl font-bold text-amber-400 mt-2">12 000</div>
-                                </div>
-                                <div class="bg-emerald-600 rounded-2xl p-5 text-white">
-                                    <div class="text-sm text-white/80">Net à percevoir</div>
-                                    <div id="net" class="text-4xl font-bold mt-2">48 000</div>
-                                </div>
-                            </div>
+                            <p class="text-zinc-500 mt-3 text-sm">Calcul professionnel des honoraires d'architecture et d'ingénierie</p>
                         </div>
+
+                        <!-- Carte principale blanche avec texte noir -->
+                        <div class="bg-white rounded-3xl shadow-2xl border border-zinc-200 p-8 text-zinc-900">
+                            
+                            <!-- Inputs -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <!-- Budget -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-zinc-600 mb-2">Budget du projet (MAD)</label>
+                                    <div class="relative">
+                                        <input type="number" id="budget" value="500000" oninput="updateHonoraires()" 
+                                               class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-6 py-4 text-4xl font-semibold text-zinc-900 outline-none">
+                                        <div class="absolute right-6 top-1/2 -translate-y-1/2 text-zinc-400 text-sm font-medium">MAD</div>
+                                    </div>
+                                </div>
+
+                                <!-- Taux d'honoraires -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-zinc-600 mb-2">Taux d'honoraires (%)</label>
+                                    <input type="number" id="taux-honoraires" value="12" step="0.5" oninput="updateHonoraires()" 
+                                           class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-6 py-4 text-4xl font-semibold text-zinc-900 outline-none">
+                                    <p class="text-[10px] text-zinc-500 mt-1">Taux standard au Maroc</p>
+                                </div>
+
+                                <!-- TVA -->
+                                <div class="md:col-span-1">
+                                    <label class="block text-sm font-semibold text-zinc-600 mb-2">Taux TVA (%)</label>
+                                    <input type="number" id="tva" value="20" step="0.1" oninput="updateHonoraires()" 
+                                           class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-6 py-4 text-4xl font-semibold text-zinc-900 outline-none">
+                                </div>
+                            </div>
+
+                            <div class="border-t border-zinc-200 my-6"></div>
+
+                            <!-- Tableau de synthèse -->
+                            <div class="mb-6">
+                                <h4 class="font-semibold text-zinc-700 mb-3 flex items-center gap-x-2">
+                                    <i class="fa-solid fa-table text-orange-500"></i> 
+                                    <span>Détail du calcul</span>
+                                </h4>
+                                
+                                <table class="w-full text-sm border border-zinc-200 rounded-2xl overflow-hidden">
+                                    <thead class="bg-zinc-100">
+                                        <tr>
+                                            <th class="text-left px-6 py-3 font-semibold text-zinc-700">Désignation</th>
+                                            <th class="text-right px-6 py-3 font-semibold text-zinc-700">Montant (MAD)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-zinc-200 text-zinc-800">
+                                        <tr>
+                                            <td class="px-6 py-4 font-medium">Budget du projet</td>
+                                            <td id="budget-display" class="px-6 py-4 text-right font-mono text-lg">500 000</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 font-medium">Honoraires calculés HT</td>
+                                            <td id="honoraires-ht" class="px-6 py-4 text-right font-mono text-2xl font-semibold text-orange-600">60 000</td>
+                                        </tr>
+                                        <tr class="bg-red-50">
+                                            <td class="px-6 py-4 font-medium text-red-700">TVA à reverser (<span id="tva-rate-display">20</span>%)</td>
+                                            <td id="tva-amount" class="px-6 py-4 text-right font-mono text-xl text-red-600">- 12 000</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="bg-emerald-100 border-t-2 border-emerald-300">
+                                        <tr>
+                                            <td class="px-6 py-4 font-bold text-emerald-800 text-lg">Net à percevoir (après déduction TVA)</td>
+                                            <td id="honoraires-net" class="px-6 py-4 text-right font-mono text-3xl font-bold text-emerald-700">48 000</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <!-- Cartes résumé -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Honoraires HT -->
+                                <div class="bg-zinc-900 text-white rounded-2xl p-6">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="text-sm text-white/70">Honoraires HT</div>
+                                            <div class="text-sm text-white/60">(Brut)</div>
+                                        </div>
+                                        <i class="fa-solid fa-file-invoice text-2xl text-white/30"></i>
+                                    </div>
+                                    <div id="honoraires-ht-big" class="text-5xl font-bold mt-3 tracking-tighter">60 000</div>
+                                    <div class="text-xs text-white/60 mt-1">MAD</div>
+                                </div>
+
+                                <!-- Net à percevoir (TVA soustraite) -->
+                                <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl p-6 shadow-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="text-sm text-white/80">Net à percevoir</div>
+                                            <div class="text-sm text-white/70">(TVA soustraite)</div>
+                                        </div>
+                                        <i class="fa-solid fa-hand-holding-usd text-2xl text-white/40"></i>
+                                    </div>
+                                    <div id="honoraires-net-big" class="text-5xl font-bold mt-3 tracking-tighter">48 000</div>
+                                    <div class="text-xs text-white/70 mt-1">MAD • Ce que tu gardes réellement</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="text-center text-xs text-zinc-500 mt-4">Les honoraires sont calculés sur la base du budget du projet × taux d'honoraires</p>
                     </div>
                 </div>
 
-                <!-- ESTIMATION -->
+                <!-- ESTIMATION MULTI-TABLEAUX -->
                 <div id="tool-estimation-content" class="tool-content hidden">
-                    <div class="max-w-5xl mx-auto">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-3xl font-bold">Estimation des Travaux</h2>
-                            <button onclick="addEstimationRow()" class="px-5 py-2 bg-emerald-600 text-white rounded-2xl flex items-center gap-x-2">
-                                <i class="fa-solid fa-plus"></i> <span>Ajouter ligne</span>
-                            </button>
+                    <div class="max-w-7xl mx-auto">
+                        
+                        <!-- Header -->
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h2 class="text-3xl font-bold text-white">Estimation des Travaux</h2>
+                                <p class="text-zinc-400 text-sm">Gérez plusieurs tableaux d'estimation</p>
+                            </div>
+                            
+                            <div class="flex items-center gap-x-3">
+                                <!-- Export buttons -->
+                                <button onclick="exportEstimationToPDF()" class="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl flex items-center gap-x-2 text-sm font-medium">
+                                    <i class="fa-solid fa-file-pdf"></i> 
+                                    <span>PDF</span>
+                                </button>
+                                <button onclick="exportEstimationToExcel()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl flex items-center gap-x-2 text-sm font-medium">
+                                    <i class="fa-solid fa-file-excel"></i> 
+                                    <span>Excel</span>
+                                </button>
+                                
+                                <button onclick="addNewEstimation()" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl flex items-center gap-x-2 font-semibold">
+                                    <i class="fa-solid fa-plus"></i> 
+                                    <span>Nouveau tableau</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="glass rounded-3xl overflow-hidden border border-zinc-800">
+
+                        <!-- Tabs -->
+                        <div id="estimation-tabs" class="flex items-center gap-x-1 mb-4 overflow-x-auto pb-2">
+                            <!-- Tabs générés dynamiquement -->
+                        </div>
+
+                        <!-- Tableau actif -->
+                        <div class="bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
                             <table class="w-full text-sm">
-                                <thead class="bg-zinc-900">
+                                <thead class="bg-zinc-100">
                                     <tr>
-                                        <th class="px-6 py-4 text-left">Désignation</th>
-                                        <th class="px-4 py-4 text-center">Unité</th>
-                                        <th class="px-4 py-4 text-right">Quantité</th>
-                                        <th class="px-4 py-4 text-right">Prix unitaire</th>
-                                        <th class="px-6 py-4 text-right">Montant</th>
-                                        <th class="px-4 py-4"></th>
+                                        <th class="px-6 py-4 text-left font-semibold text-zinc-700">Désignation</th>
+                                        <th class="px-4 py-4 text-center font-semibold text-zinc-700">Unité</th>
+                                        <th class="px-4 py-4 text-right font-semibold text-zinc-700">Quantité</th>
+                                        <th class="px-4 py-4 text-right font-semibold text-zinc-700">Prix unitaire (MAD)</th>
+                                        <th class="px-6 py-4 text-right font-semibold text-zinc-700">Montant (MAD)</th>
+                                        <th class="px-4 py-4 w-12"></th>
                                     </tr>
                                 </thead>
-                                <tbody id="estimation-body" class="divide-y divide-zinc-700"></tbody>
-                                <tfoot class="bg-zinc-900 font-bold">
+                                <tbody id="estimation-body" class="divide-y divide-zinc-200 text-zinc-900">
+                                    <!-- Lignes générées dynamiquement -->
+                                </tbody>
+                                <tfoot class="bg-emerald-600 text-white font-bold">
                                     <tr>
-                                        <td colspan="4" class="px-6 py-4 text-right">TOTAL</td>
-                                        <td id="estimation-total" class="px-6 py-4 text-right text-xl text-orange-400">0</td>
+                                        <td colspan="4" class="px-6 py-5 text-right text-lg">TOTAL</td>
+                                        <td id="estimation-total" class="px-6 py-5 text-right text-3xl font-bold">0</td>
                                         <td></td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
+
+                        <div class="flex justify-between items-center mt-3 px-1">
+                            <button onclick="addEstimationRow()" class="px-5 py-2 bg-white border border-zinc-300 hover:bg-zinc-50 text-zinc-700 rounded-2xl flex items-center gap-x-2 text-sm font-medium">
+                                <i class="fa-solid fa-plus text-emerald-500"></i> 
+                                <span>Ajouter une ligne</span>
+                            </button>
+                            
+                            <button onclick="deleteCurrentEstimation()" class="px-4 py-2 text-red-500 hover:text-red-600 text-sm flex items-center gap-x-2">
+                                <i class="fa-solid fa-trash"></i> 
+                                <span>Supprimer ce tableau</span>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
 
                 <!-- SURFACES -->
                 <div id="tool-surfaces-content" class="tool-content hidden">
-                    <div class="max-w-3xl mx-auto">
-                        <div class="text-center mb-6"><h2 class="text-3xl font-bold">Calcul de Surfaces</h2></div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="glass rounded-3xl p-6 border border-zinc-800 space-y-5">
-                                <div><label class="text-sm text-zinc-400">Surface terrain (m²)</label><input type="number" id="surface-terrain" value="1200" oninput="calculateSurfaces()" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-2xl font-semibold"></div>
-                                <div><label class="text-sm text-zinc-400">Surface RDC (m²)</label><input type="number" id="surface-rdc" value="450" oninput="calculateSurfaces()" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-2xl font-semibold"></div>
-                                <div><label class="text-sm text-zinc-400">Nombre d'étages</label><input type="number" id="nb-etages" value="2" oninput="calculateSurfaces()" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-2xl font-semibold"></div>
-                                <div><label class="text-sm text-zinc-400">Surface par étage (m²)</label><input type="number" id="surface-etage" value="380" oninput="calculateSurfaces()" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-2xl font-semibold"></div>
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Header -->
+                        <div class="text-center mb-8">
+                            <h2 class="text-3xl font-bold text-white">Calcul de Surfaces</h2>
+                            <p class="text-zinc-400 mt-2">Calcul des surfaces + Coefficient d'Occupation du Sol (COS)</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            
+                            <!-- Inputs -->
+                            <div class="lg:col-span-3 bg-white rounded-3xl p-8 border border-zinc-200 shadow-xl text-zinc-900">
+                                <h4 class="font-semibold text-lg mb-5 flex items-center gap-x-2">
+                                    <i class="fa-solid fa-edit text-orange-500"></i>
+                                    <span>Données du projet</span>
+                                </h4>
+                                
+                                <div class="space-y-5">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-zinc-600 mb-1.5">Surface du terrain (m²)</label>
+                                        <input type="number" id="surface-terrain" value="1200" oninput="calculateSurfaces()" 
+                                               class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-2xl font-semibold outline-none">
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-600 mb-1.5">Surface RDC (m²)</label>
+                                            <input type="number" id="surface-rdc" value="450" oninput="calculateSurfaces()" 
+                                                   class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-2xl font-semibold outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-600 mb-1.5">Surface par étage (m²)</label>
+                                            <input type="number" id="surface-etage" value="380" oninput="calculateSurfaces()" 
+                                                   class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-2xl font-semibold outline-none">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-zinc-600 mb-1.5">Nombre d'étages</label>
+                                        <input type="number" id="nb-etages" value="2" oninput="calculateSurfaces()" 
+                                               class="w-full bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-2xl font-semibold outline-none">
+                                    </div>
+
+                                    <!-- COS -->
+                                    <div class="pt-4 border-t border-zinc-200">
+                                        <label class="block text-sm font-semibold text-zinc-600 mb-1.5">Coefficient d'Occupation du Sol (COS) %</label>
+                                        <div class="flex items-center gap-x-3">
+                                            <input type="number" id="cos" value="40" step="1" oninput="calculateSurfaces()" 
+                                                   class="w-32 bg-zinc-50 border border-zinc-300 focus:border-orange-500 rounded-2xl px-5 py-3 text-2xl font-semibold outline-none">
+                                            <span class="text-xl font-bold text-zinc-500">%</span>
+                                        </div>
+                                        <p class="text-xs text-zinc-500 mt-1">Surface constructible maximale autorisée sur le terrain</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="space-y-4">
-                                <div class="glass rounded-3xl p-5 border border-zinc-800"><div class="text-sm text-zinc-400">Surface plancher totale</div><div id="surface-plancher" class="text-5xl font-bold text-orange-400">1210</div></div>
-                                <div class="glass rounded-3xl p-5 border border-zinc-800"><div class="text-sm text-zinc-400">Surface habitable</div><div id="surface-habitable" class="text-5xl font-bold text-emerald-400">980</div></div>
-                                <div class="glass rounded-3xl p-5 border border-zinc-800"><div class="text-sm text-zinc-400">Volume (h=3.2m)</div><div id="volume-total" class="text-5xl font-bold text-blue-400">3872</div></div>
+
+                            <!-- Résultats -->
+                            <div class="lg:col-span-2 space-y-4">
+                                <div class="bg-white rounded-3xl p-6 border border-zinc-200 shadow-xl">
+                                    <div class="text-sm text-zinc-500">Surface plancher totale</div>
+                                    <div id="surface-plancher" class="text-5xl font-bold text-orange-500 mt-1">1210</div>
+                                    <div class="text-xs text-zinc-400 mt-1">RDC + (Étages × Surface/étage)</div>
+                                </div>
+
+                                <div class="bg-white rounded-3xl p-6 border border-zinc-200 shadow-xl">
+                                    <div class="text-sm text-zinc-500">Surface habitable estimée</div>
+                                    <div id="surface-habitable" class="text-5xl font-bold text-emerald-500 mt-1">980</div>
+                                    <div class="text-xs text-zinc-400 mt-1">≈ 81% de la surface plancher</div>
+                                </div>
+
+                                <!-- COS Result -->
+                                <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-6 text-white shadow-xl">
+                                    <div class="text-sm text-white/80">Surface constructible (COS)</div>
+                                    <div id="surface-cos" class="text-5xl font-bold mt-1">480</div>
+                                    <div class="text-xs text-white/70 mt-1">Terrain × COS%</div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -277,9 +465,19 @@
                     <h1 class="title-font text-3xl font-semibold">Planification</h1>
                     <p class="text-zinc-400">Calendrier annuel • Tâches par date</p>
                 </div>
-                <button onclick="showPlanningModal()" class="px-5 py-2 bg-orange-500 text-white rounded-2xl flex items-center gap-x-2">
-                    <i class="fa-solid fa-plus"></i> <span>Ajouter une tâche</span>
-                </button>
+                <div class="flex items-center gap-x-3">
+                    <button onclick="showPlanningModal()" class="px-5 py-2 bg-orange-500 text-white rounded-2xl flex items-center gap-x-2">
+                        <i class="fa-solid fa-plus"></i> <span>Ajouter une tâche</span>
+                    </button>
+                    
+                    <!-- Bouton de nettoyage -->
+                    <button onclick="forceCleanupPlanning()" 
+                            class="px-4 py-2 bg-zinc-700 hover:bg-red-600 text-white text-sm rounded-2xl flex items-center gap-x-2 transition-all"
+                            title="Supprimer les projets fantômes de la planification">
+                        <i class="fa-solid fa-broom"></i> 
+                        <span>Nettoyer</span>
+                    </button>
+                </div>
             </div>
             <div class="flex items-center justify-center gap-x-4 mb-8">
                 <button onclick="changeYear(-1)" class="px-4 py-2 bg-zinc-800 rounded-2xl hover:bg-zinc-700"><i class="fa-solid fa-chevron-left"></i></button>
@@ -313,15 +511,41 @@
             </div>
             <div class="space-y-5">
                 <div><label class="text-sm text-zinc-400">Nom du projet</label><input id="planning-project-name" type="text" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg" placeholder="Nom du projet"></div>
-                <div class="grid grid-cols-3 gap-4">
+                
+                <!-- Type de planification -->
+                <div>
+                    <label class="text-sm text-zinc-400 mb-2 block">Planifier pour :</label>
+                    <div class="flex flex-wrap gap-x-4 gap-y-1">
+                        <label class="flex items-center gap-x-2 cursor-pointer">
+                            <input type="radio" name="planning-type" value="single" checked onchange="togglePlanningType()" class="accent-orange-500">
+                            <span class="text-sm">Un seul jour</span>
+                        </label>
+                        <label class="flex items-center gap-x-2 cursor-pointer">
+                            <input type="radio" name="planning-type" value="multiple" onchange="togglePlanningType()" class="accent-orange-500">
+                            <span class="text-sm font-medium text-orange-400">Plusieurs jours</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Inputs date -->
+                <div class="grid grid-cols-3 gap-4" id="single-day-inputs">
                     <div><label class="text-sm text-zinc-400">Année</label><input id="planning-year" type="number" value="2026" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg"></div>
                     <div><label class="text-sm text-zinc-400">Mois</label><select id="planning-month" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg">
                         <option value="0">Janvier</option><option value="1">Février</option><option value="2">Mars</option><option value="3">Avril</option>
                         <option value="4">Mai</option><option value="5">Juin</option><option value="6">Juillet</option><option value="7">Août</option>
                         <option value="8">Septembre</option><option value="9">Octobre</option><option value="10">Novembre</option><option value="11">Décembre</option>
                     </select></div>
-                    <div><label class="text-sm text-zinc-400">Jour</label><input id="planning-day" type="number" min="1" max="31" value="1" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg"></div>
+                    <div><label class="text-sm text-zinc-400">Jour (début)</label><input id="planning-day" type="number" min="1" max="31" value="1" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg"></div>
                 </div>
+
+                <!-- Nombre de jours -->
+                <div id="multiple-days-input" class="hidden">
+                    <label class="text-sm text-zinc-400">Nombre de jours</label>
+                    <input id="planning-duration" type="number" value="5" min="2" max="90" 
+                           class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg">
+                    <p class="text-xs text-orange-400 mt-1">Le projet sera ajouté pour ce nombre de jours consécutifs.</p>
+                </div>
+
                 <div><label class="text-sm text-zinc-400">Profils assignés</label><div id="planning-profiles-list" class="max-h-[150px] overflow-auto border border-zinc-700 rounded-2xl p-3 bg-zinc-900"></div></div>
             </div>
             <button onclick="savePlanningTask()" class="mt-8 w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">Ajouter le projet</button>
@@ -329,33 +553,101 @@
     </div>
 
     <!-- CREATE PROFILE MODAL -->
-    <div id="create-profile-modal" class="fixed inset-0 bg-black/90 z-[99999] hidden items-center justify-center">
-        <div class="glass rounded-3xl p-10 w-full max-w-md border border-zinc-700">
-            <div class="text-center mb-8"><img src="logo-dimensionspro.png" class="h-16 mx-auto mb-4"><h2 class="text-3xl font-bold">Créer un profil</h2></div>
-            <div class="space-y-5">
-                <div><label class="text-sm text-zinc-400">Nom complet</label><input id="profile-name-input" type="text" placeholder="Ahmed BNI CHIKER" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg"></div>
-                <div><label class="text-sm text-zinc-400">Mot de passe (optionnel)</label><input id="profile-password-input" type="password" placeholder="Laisser vide si pas de mot de passe" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg"><p class="text-[10px] text-zinc-500 mt-1">Tu pourras en définir un plus tard dans les paramètres</p></div>
+    <!-- CREATE PROFILE MODAL - Design moderne -->
+    <div id="create-profile-modal" class="fixed inset-0 bg-black/80 z-[99999] hidden items-center justify-center">
+        <div class="bg-white rounded-3xl w-full max-w-md mx-4 shadow-2xl overflow-hidden">
+            
+            <!-- Header -->
+            <div class="px-8 pt-8 pb-6 text-center border-b border-zinc-100">
+                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-user-plus text-orange-500 text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-zinc-900">Créer un profil</h2>
+                <p class="text-zinc-500 text-sm mt-1">Rejoignez Dimensions Pro</p>
             </div>
-            <div class="flex gap-x-4 mt-8">
-                <button onclick="hideCreateProfileModal()" class="flex-1 py-4 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-2xl text-lg">Retour</button>
-                <button onclick="createProfile()" class="flex-1 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl text-lg">Créer un nouveau profil</button>
+
+            <div class="p-8 space-y-5">
+                
+                <!-- Nom complet -->
+                <div>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Nom complet</label>
+                    <input id="profile-name-input" type="text" placeholder="Ahmed BNI CHIKER" 
+                           class="w-full bg-zinc-50 border border-zinc-200 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-lg outline-none text-zinc-900">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Adresse email</label>
+                    <input id="profile-email-input" type="email" placeholder="votre@email.com" 
+                           class="w-full bg-zinc-50 border border-zinc-200 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-lg outline-none text-zinc-900">
+                    <p class="text-xs text-zinc-500 mt-1">Utile pour récupérer votre mot de passe</p>
+                </div>
+
+                <!-- Mot de passe -->
+                <div>
+                    <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Mot de passe (optionnel)</label>
+                    <input id="profile-password-input" type="password" placeholder="Laisser vide si pas de mot de passe" 
+                           class="w-full bg-zinc-50 border border-zinc-200 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-lg outline-none text-zinc-900">
+                    <p class="text-xs text-zinc-500 mt-1">Tu pourras en définir un plus tard dans les paramètres</p>
+                </div>
+
             </div>
+
+            <!-- Actions -->
+            <div class="px-8 py-6 bg-zinc-50 flex gap-x-3 border-t border-zinc-100">
+                <button onclick="hideCreateProfileModal()" 
+                        class="flex-1 py-3.5 bg-white border border-zinc-300 hover:bg-zinc-100 text-zinc-700 font-semibold rounded-2xl transition-all">
+                    Retour
+                </button>
+                <button onclick="createProfile()" 
+                        class="flex-1 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all">
+                    Créer le profil
+                </button>
+            </div>
+
         </div>
     </div>
 
     <!-- PASSWORD PROMPT -->
-    <div id="password-prompt-modal" class="fixed inset-0 bg-black/90 z-[99999] hidden items-center justify-center">
-        <div class="glass rounded-3xl p-10 w-full max-w-sm border border-zinc-700">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-lock text-3xl text-orange-400"></i></div>
-                <h2 class="text-2xl font-bold">Profil protégé</h2>
-                <p class="text-sm text-zinc-400 mt-1" id="password-profile-name"></p>
+    <!-- PASSWORD PROMPT + Mot de passe oublié -->
+    <div id="password-prompt-modal" class="fixed inset-0 bg-black/80 z-[99999] hidden items-center justify-center">
+        <div class="bg-white rounded-3xl w-full max-w-sm mx-4 shadow-2xl overflow-hidden">
+            
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-lock text-orange-500 text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-zinc-900">Profil protégé</h2>
+                <p class="text-sm text-zinc-500 mt-1" id="password-profile-name"></p>
             </div>
-            <div class="space-y-4"><div><label class="text-sm text-zinc-400">Mot de passe</label><input id="password-input" type="password" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-lg" placeholder="Entrez votre mot de passe"></div></div>
-            <div class="flex gap-x-3 mt-8">
-                <button onclick="hidePasswordPrompt()" class="flex-1 py-3.5 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold rounded-2xl">Annuler</button>
-                <button onclick="submitPassword()" class="flex-1 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">Déverrouiller</button>
+
+            <div class="px-8 pb-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Mot de passe</label>
+                    <input id="password-input" type="password" 
+                           class="w-full bg-zinc-50 border border-zinc-200 focus:border-orange-500 rounded-2xl px-5 py-3.5 text-lg outline-none"
+                           placeholder="Entrez votre mot de passe">
+                </div>
+
+                <!-- Lien Mot de passe oublié -->
+                <div class="text-right">
+                    <button onclick="forgotPassword()" class="text-sm text-orange-500 hover:text-orange-600 font-medium">
+                        Mot de passe oublié ?
+                    </button>
+                </div>
             </div>
+
+            <div class="px-8 py-5 bg-zinc-50 flex gap-x-3 border-t border-zinc-100">
+                <button onclick="hidePasswordPrompt()" 
+                        class="flex-1 py-3 bg-white border border-zinc-300 hover:bg-zinc-100 text-zinc-700 font-semibold rounded-2xl">
+                    Annuler
+                </button>
+                <button onclick="submitPassword()" 
+                        class="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">
+                    Déverrouiller
+                </button>
+            </div>
+
         </div>
     </div>
 
@@ -454,9 +746,10 @@
                 <div>
                     <div class="flex items-center gap-x-2 mb-4"><i class="fa-solid fa-palette text-orange-400"></i><h4 class="font-semibold text-orange-400">Apparence</h4></div>
                     <div class="flex gap-x-3">
-                        <button onclick="setTheme('dark')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500 transition-all"><i class="fa-solid fa-moon text-orange-400"></i> <span class="text-sm font-medium">Sombre</span></button>
-                        <button onclick="setTheme('light')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500 transition-all"><i class="fa-solid fa-sun text-yellow-400"></i> <span class="text-sm font-medium">Clair</span></button>
+                        <button onclick="setTheme('dark')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500 transition-all"><i class="fa-solid fa-moon text-orange-400"></i> <span class="text-sm font-medium">Sombre (recommandé)</span></button>
+                        <button onclick="setTheme('light')" class="flex-1 py-3 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center gap-x-2 hover:border-orange-500 transition-all opacity-50 cursor-not-allowed" title="Mode clair non supporté actuellement"><i class="fa-solid fa-sun text-yellow-400"></i> <span class="text-sm font-medium">Clair (bientôt)</span></button>
                     </div>
+                    <p class="text-[10px] text-zinc-500 mt-1 text-center">Le mode clair est en cours de développement.</p>
                 </div>
 
                 <div class="pt-6 border-t border-zinc-700">
@@ -484,9 +777,74 @@
         let projects = [];
         let currentTab = 0;
         let estimationRows = [];
+        let estimations = [];           // Liste de tous les tableaux d'estimation
+        let currentEstimationId = null; // ID du tableau actuellement ouvert
         let projectSearchTerm = '';
         let editingIndex = null;
         let currentPlanningYear = 2026;
+
+        // ==================== INDEXEDDB POUR LES PDFs (solution définitive quota) ====================
+        let pdfDB = null;
+
+        function initPDFDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('DimensionsProPDFs', 1);
+
+                request.onupgradeneeded = function(event) {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('pdfs')) {
+                        const store = db.createObjectStore('pdfs', { keyPath: 'id' });
+                        store.createIndex('projectId', 'projectId', { unique: false });
+                    }
+                };
+
+                request.onsuccess = function(event) {
+                    pdfDB = event.target.result;
+                    console.log('[IndexedDB] Base de données PDFs initialisée');
+                    resolve(pdfDB);
+                };
+
+                request.onerror = function(event) {
+                    console.error('[IndexedDB] Erreur:', event);
+                    reject(event);
+                };
+            });
+        }
+
+        async function savePDFToIndexedDB(projectId, planName, base64Data, fileName = null) {
+            if (!pdfDB) await initPDFDatabase();
+            return new Promise((resolve, reject) => {
+                const tx = pdfDB.transaction(['pdfs'], 'readwrite');
+                const store = tx.objectStore('pdfs');
+                const id = `${projectId}__${planName}`;
+                const data = { id, projectId, planName, base64: base64Data, fileName: fileName || planName, savedAt: new Date().toISOString() };
+                const req = store.put(data);
+                req.onsuccess = () => resolve(true);
+                req.onerror = (e) => reject(e);
+            });
+        }
+
+        async function getPDFFromIndexedDB(projectId, planName) {
+            if (!pdfDB) await initPDFDatabase();
+            return new Promise((resolve) => {
+                const tx = pdfDB.transaction(['pdfs'], 'readonly');
+                const store = tx.objectStore('pdfs');
+                const req = store.get(`${projectId}__${planName}`);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        async function deletePDFFromIndexedDB(projectId, planName) {
+            if (!pdfDB) await initPDFDatabase();
+            return new Promise((resolve) => {
+                const tx = pdfDB.transaction(['pdfs'], 'readwrite');
+                const store = tx.objectStore('pdfs');
+                const req = store.delete(`${projectId}__${planName}`);
+                req.onsuccess = () => resolve(true);
+                req.onerror = () => resolve(false);
+            });
+        }
 
         // ==================== HOME & PROFILES ====================
         function showHomeScreen() {
@@ -507,13 +865,14 @@
             }
             container.innerHTML = '';
             profiles.forEach(profile => {
+                const displayName = profile.nom || profile.name || 'Utilisateur';
                 const card = document.createElement('div');
                 card.className = 'group bg-zinc-900 border border-zinc-700 hover:border-orange-500/50 rounded-3xl p-5 cursor-pointer transition-all hover:-translate-y-0.5';
                 card.innerHTML = `
                     <div class="flex items-start justify-between">
                         <div class="flex items-center gap-x-4">
-                            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-inner flex-shrink-0">${profile.name.charAt(0).toUpperCase()}</div>
-                            <div class="min-w-0"><div class="font-semibold text-lg text-white group-hover:text-orange-400 transition-colors">${profile.name}</div><div class="text-xs text-zinc-500 truncate">${profile.company || 'Architecte / Ingénieur'}</div></div>
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-inner flex-shrink-0">${displayName.charAt(0).toUpperCase()}</div>
+                            <div class="min-w-0"><div class="font-semibold text-lg text-white group-hover:text-orange-400 transition-colors">${displayName}</div><div class="text-xs text-zinc-500 truncate">${profile.company || 'Architecte / Ingénieur'}</div></div>
                         </div>
                         <button onclick="deleteProfile('${profile.id}', event)" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-500 p-1 transition-all"><i class="fa-solid fa-trash text-sm"></i></button>
                     </div>
@@ -529,7 +888,42 @@
         function showCreateProfileModal() { document.getElementById('create-profile-modal').classList.remove('hidden'); document.getElementById('create-profile-modal').classList.add('flex'); }
         function hideCreateProfileModal() { document.getElementById('create-profile-modal').classList.remove('flex'); document.getElementById('create-profile-modal').classList.add('hidden'); }
 
-        function hidePasswordPrompt() { document.getElementById('password-prompt-modal').classList.remove('flex'); document.getElementById('password-prompt-modal').classList.add('hidden'); window.pendingProfile = null; }
+        function hidePasswordPrompt() { 
+            document.getElementById('password-prompt-modal').classList.remove('flex'); 
+            document.getElementById('password-prompt-modal').classList.add('hidden'); 
+            window.pendingProfile = null; 
+        }
+
+        // ==================== MOT DE PASSE OUBLIÉ ====================
+        function forgotPassword() {
+            const profile = window.pendingProfile;
+            if (!profile) return;
+
+            hidePasswordPrompt();
+
+            const email = prompt("Veuillez entrer votre adresse email pour récupérer votre mot de passe :");
+            if (!email) return;
+
+            const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+            const foundProfile = profiles.find(p => 
+                p.email && p.email.toLowerCase() === email.toLowerCase()
+            );
+
+            if (foundProfile && foundProfile.password) {
+                alert(`✅ Votre mot de passe est : ${foundProfile.password}\n\nVous pouvez maintenant l'utiliser pour vous connecter.`);
+                // Réouvrir la modale de mot de passe
+                setTimeout(() => {
+                    window.pendingProfile = foundProfile;
+                    document.getElementById('password-profile-name').innerHTML = `Profil : <strong>${foundProfile.nom || foundProfile.name}</strong>`;
+                    document.getElementById('password-prompt-modal').classList.remove('hidden');
+                    document.getElementById('password-prompt-modal').classList.add('flex');
+                }, 300);
+            } else if (foundProfile && !foundProfile.password) {
+                alert("Ce profil n'a pas de mot de passe défini.");
+            } else {
+                alert("❌ Aucun profil trouvé avec cet email.");
+            }
+        }
 
         function submitPassword() {
             const enteredPassword = document.getElementById('password-input').value;
@@ -539,8 +933,9 @@
                 hidePasswordPrompt();
                 document.getElementById('home-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
-                document.getElementById('profile-name').innerHTML = profile.name;
-                document.getElementById('profile-avatar').innerHTML = profile.name.charAt(0);
+                const displayName = profile.nom || profile.name || 'Utilisateur';
+                document.getElementById('profile-name').innerHTML = displayName;
+                document.getElementById('profile-avatar').innerHTML = displayName.charAt(0);
                 let savedProjects = localStorage.getItem('dimensionspro_all_projects');
                 projects = savedProjects ? JSON.parse(savedProjects) : [];
                 updateHonoraires(); initEstimation(); calculateSurfaces(); renderPhasesTable(); switchTab(1);
@@ -583,10 +978,27 @@
         }
 
         async function createProfile() {
-            const name = document.getElementById('profile-name-input').value.trim();
-            if (!name) { alert("Veuillez entrer un nom"); return; }
+            const fullName = document.getElementById('profile-name-input').value.trim();
+            if (!fullName) { alert("Veuillez entrer un nom"); return; }
+            
+            const email = document.getElementById('profile-email-input').value.trim();
             const password = document.getElementById('profile-password-input').value.trim();
-            const profile = { id: 'profile_' + Date.now(), name: name, password: password || null, created: new Date().toISOString() };
+            
+            // On sépare nom et prénom (simple)
+            const nameParts = fullName.split(' ');
+            const nom = nameParts[0];
+            const prenom = nameParts.slice(1).join(' ');
+
+            const profile = { 
+                id: 'profile_' + Date.now(), 
+                nom: nom, 
+                prenom: prenom, 
+                name: fullName,
+                email: email || null,           // ← Email ajouté
+                password: password || null, 
+                created: new Date().toISOString() 
+            };
+            
             let profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
             profiles.push(profile);
             localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
@@ -604,7 +1016,8 @@
 
             if (profile.password) {
                 window.pendingProfile = profile;
-                document.getElementById('password-profile-name').innerHTML = `Profil : <strong>${profile.name}</strong>`;
+                const displayName = profile.nom || profile.name || 'Utilisateur';
+                document.getElementById('password-profile-name').innerHTML = `Profil : <strong>${displayName}</strong>`;
                 document.getElementById('password-input').value = '';
                 document.getElementById('password-prompt-modal').classList.remove('hidden');
                 document.getElementById('password-prompt-modal').classList.add('flex');
@@ -618,8 +1031,9 @@
             mainApp.style.opacity = '0'; mainApp.style.transform = 'scale(0.98)';
             setTimeout(() => { mainApp.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'; mainApp.style.opacity = '1'; mainApp.style.transform = 'scale(1)'; }, 50);
 
-            document.getElementById('profile-name').innerHTML = profile.name;
-            document.getElementById('profile-avatar').innerHTML = profile.name.charAt(0);
+            const displayName = profile.nom || profile.name || 'Utilisateur';
+            document.getElementById('profile-name').innerHTML = displayName;
+            document.getElementById('profile-avatar').innerHTML = displayName.charAt(0);
 
             let savedProjects = localStorage.getItem('dimensionspro_all_projects');
             const oldProfileProjects = localStorage.getItem('dimensionspro_projects_' + profileId);
@@ -632,6 +1046,7 @@
             }
 
             updateHonoraires(); initEstimation(); calculateSurfaces(); renderPhasesTable(); switchTab(1);
+            updateNotificationBadge();
         }
 
         function logout() {
@@ -641,28 +1056,48 @@
             loadProfilesList();
         }
 
-        function saveProjects() {
+        // Sauvegarde sécurisée avec gestion du quota
+        function safeLocalStorageSet(key, value) {
             try {
-                localStorage.setItem('dimensionspro_all_projects', JSON.stringify(projects));
+                localStorage.setItem(key, value);
+                return true;
             } catch (e) {
                 if (e.name === 'QuotaExceededError' || e.code === 22) {
-                    console.warn("Quota localStorage dépassé ! Suppression des PDFs pour libérer de l'espace...");
-                    // Supprime les données PDF volumineuses pour permettre la sauvegarde
-                    const projectsWithoutPDFs = projects.map(p => {
-                        if (p.plans) {
-                            return { ...p, plans: p.plans.map(plan => ({ name: plan.name, type: plan.type })) };
-                        }
-                        return p;
-                    });
-                    try {
-                        localStorage.setItem('dimensionspro_all_projects', JSON.stringify(projectsWithoutPDFs));
-                        alert("⚠️ Espace localStorage plein ! Les PDFs ont été retirés de la sauvegarde.\nRé-importez-les si besoin.");
-                    } catch (e2) {
-                        alert("❌ Impossible de sauvegarder. L'espace localStorage est complètement plein.");
-                    }
-                } else {
-                    console.error("Erreur sauvegarde:", e);
+                    return false;
                 }
+                throw e;
+            }
+        }
+
+        function saveProjects() {
+            const data = JSON.stringify(projects);
+            
+            if (safeLocalStorageSet('dimensionspro_all_projects', data)) {
+                return; // Succès
+            }
+
+            // Quota dépassé → on supprime les PDFs
+            console.warn("Quota localStorage dépassé → Suppression des PDFs pour libérer de l'espace");
+            
+            const strippedProjects = projects.map(p => {
+                if (p.plans && p.plans.length > 0) {
+                    return {
+                        ...p,
+                        plans: p.plans.map(plan => ({
+                            name: plan.name,
+                            type: plan.type || 'application/pdf'
+                        }))
+                    };
+                }
+                return p;
+            });
+
+            const strippedData = JSON.stringify(strippedProjects);
+
+            if (safeLocalStorageSet('dimensionspro_all_projects', strippedData)) {
+                alert("⚠️ Espace localStorage plein !\nLes PDFs ont été retirés de la sauvegarde pour permettre l'enregistrement.\nVous devrez les ré-importer si nécessaire.");
+            } else {
+                alert("❌ Espace localStorage complètement plein.\nImpossible de sauvegarder même sans les PDFs.\nEssayez de supprimer des anciens projets ou PDFs.");
             }
         }
 
@@ -685,22 +1120,126 @@
             document.getElementById('tool-' + tool + '-content').classList.add('active');
             document.querySelectorAll('.tool-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tool-' + tool).classList.add('active');
+
+            // Initialiser les calculateurs quand on ouvre les onglets
+            if (tool === 'honoraires') {
+                setTimeout(() => {
+                    if (typeof updateHonoraires === 'function') updateHonoraires();
+                }, 50);
+            }
+            if (tool === 'surfaces') {
+                setTimeout(() => {
+                    if (typeof calculateSurfaces === 'function') calculateSurfaces();
+                }, 50);
+            }
         }
 
         // ==================== HONORAIRES ====================
         function updateHonoraires() {
             const budget = parseFloat(document.getElementById('budget').value) || 0;
-            const tva = parseFloat(document.getElementById('tva').value) || 0;
-            const ht = budget * 0.12; const tvaAmount = ht * (tva / 100); const net = ht - tvaAmount;
-            document.getElementById('honoraires').innerHTML = Math.round(ht).toLocaleString('fr-FR');
-            document.getElementById('tvaAmount').innerHTML = Math.round(tvaAmount).toLocaleString('fr-FR');
-            document.getElementById('net').innerHTML = Math.round(net).toLocaleString('fr-FR');
+            const tauxHonoraires = parseFloat(document.getElementById('taux-honoraires').value) || 12;
+            const tvaRate = parseFloat(document.getElementById('tva').value) || 20;
+
+            // Calculs : TVA soustraite des honoraires
+            const honorairesHT = budget * (tauxHonoraires / 100);
+            const tvaAmount = honorairesHT * (tvaRate / 100);
+            const netAPercevoir = honorairesHT - tvaAmount;   // TVA soustraite
+
+            // Mise à jour du tableau
+            const budgetEl = document.getElementById('budget-display');
+            if (budgetEl) budgetEl.innerHTML = Math.round(budget).toLocaleString('fr-FR');
+
+            const htEl = document.getElementById('honoraires-ht');
+            if (htEl) htEl.innerHTML = Math.round(honorairesHT).toLocaleString('fr-FR');
+
+            const tvaAmountEl = document.getElementById('tva-amount');
+            if (tvaAmountEl) tvaAmountEl.innerHTML = '- ' + Math.round(tvaAmount).toLocaleString('fr-FR');
+
+            const tvaRateDisplay = document.getElementById('tva-rate-display');
+            if (tvaRateDisplay) tvaRateDisplay.innerHTML = tvaRate;
+
+            const netEl = document.getElementById('honoraires-net');
+            if (netEl) netEl.innerHTML = Math.round(netAPercevoir).toLocaleString('fr-FR');
+
+            // Cartes résumé
+            const htBig = document.getElementById('honoraires-ht-big');
+            if (htBig) htBig.innerHTML = Math.round(honorairesHT).toLocaleString('fr-FR');
+
+            const netBig = document.getElementById('honoraires-net-big');
+            if (netBig) netBig.innerHTML = Math.round(netAPercevoir).toLocaleString('fr-FR');
         }
 
         // ==================== ESTIMATION ====================
         function initEstimation() {
-            estimationRows = [{ designation: "Travaux de dépose", unite: "ENS", quantite: 1, prix: 100000 }, { designation: "Mur de clôture", unite: "ml", quantite: 240, prix: 1500 }];
+            loadEstimations();
+            
+            if (currentEstimationId) {
+                const current = estimations.find(e => e.id === currentEstimationId);
+                if (current) {
+                    estimationRows = [...current.rows];
+                }
+            }
+            
+            renderEstimationTabs();
             renderEstimation();
+        }
+
+        // Nettoyage des données orphelines (projets supprimés mais encore dans la planification)
+        function cleanupOrphanedData() {
+            try {
+                let projectsData = JSON.parse(localStorage.getItem('dimensionspro_all_projects') || '[]');
+                const projectNames = new Set(projectsData.map(p => p.name).filter(n => n && n.trim() !== ''));
+
+                let planningData = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
+                const originalLength = planningData.length;
+
+                planningData = planningData.filter(entry => {
+                    if (!entry.projectName || typeof entry.projectName !== 'string' || entry.projectName.trim() === '') return false;
+                    if (!projectNames.has(entry.projectName)) return false;
+                    if (entry.projectName.trim().length < 3) return false;
+                    return true;
+                });
+
+                if (planningData.length !== originalLength) {
+                    localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planningData));
+                    console.log(`[Cleanup] ${originalLength - planningData.length} entrées orphelines supprimées.`);
+                }
+
+                const cleanProjects = projectsData.filter(p => p.name && p.name.trim().length >= 2);
+                if (cleanProjects.length !== projectsData.length) {
+                    localStorage.setItem('dimensionspro_all_projects', JSON.stringify(cleanProjects));
+                }
+
+            } catch (e) {
+                console.error("Erreur cleanup:", e);
+            }
+        }
+
+        // Fonction manuelle pour nettoyer la planification (appelée par le bouton)
+        function forceCleanupPlanning() {
+            if (!confirm("Nettoyer la planification ?\n\nCela va supprimer tous les projets fantômes et les anciennes entrées de test.")) {
+                return;
+            }
+
+            let planningData = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
+            const before = planningData.length;
+
+            // Supprimer toutes les entrées avec des noms suspects ou orphelins
+            planningData = planningData.filter(entry => {
+                if (!entry.projectName || typeof entry.projectName !== 'string') return false;
+                const name = entry.projectName.trim();
+                if (name.length < 3) return false;
+                if (['ez', 'bat', '141', 'hgku', 'test'].includes(name.toLowerCase())) return false;
+                return true;
+            });
+
+            localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planningData));
+
+            const removed = before - planningData.length;
+            alert(`✅ Nettoyage terminé !\n${removed} entrée(s) supprimée(s).`);
+
+            // Recharger la vue planification
+            if (typeof renderPlanning === 'function') renderPlanning();
         }
         function renderEstimation() {
             const tbody = document.getElementById('estimation-body'); tbody.innerHTML = '';
@@ -708,14 +1247,249 @@
             estimationRows.forEach((row, index) => {
                 const montant = row.quantite * row.prix; total += montant;
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="px-6 py-4"><input value="${row.designation}" class="bg-transparent w-full" onchange="updateEstimationRow(${index}, 'designation', this.value)"></td><td class="px-4 py-4 text-center"><input value="${row.unite}" class="bg-transparent w-16 text-center" onchange="updateEstimationRow(${index}, 'unite', this.value)"></td><td class="px-4 py-4 text-right"><input type="number" value="${row.quantite}" class="bg-transparent w-20 text-right" onchange="updateEstimationRow(${index}, 'quantite', parseFloat(this.value))"></td><td class="px-4 py-4 text-right"><input type="number" value="${row.prix}" class="bg-transparent w-28 text-right" onchange="updateEstimationRow(${index}, 'prix', parseFloat(this.value))"></td><td class="px-6 py-4 text-right font-semibold text-orange-400">${montant.toLocaleString('fr-FR')}</td><td class="px-4 py-4"><button onclick="deleteEstimationRow(${index})" class="text-red-400"><i class="fa-solid fa-trash"></i></button></td>`;
+                tr.className = 'hover:bg-zinc-50 transition-colors';
+                
+                tr.innerHTML = `
+                    <td class="px-6 py-4">
+                        <input value="${row.designation}" 
+                               class="bg-white border border-zinc-300 focus:border-orange-500 rounded-xl px-4 py-2 w-full text-zinc-900 font-medium outline-none"
+                               onchange="updateEstimationRow(${index}, 'designation', this.value)">
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <input value="${row.unite}" 
+                               class="bg-white border border-zinc-300 focus:border-orange-500 rounded-xl px-3 py-2 w-20 text-center text-zinc-900 outline-none"
+                               onchange="updateEstimationRow(${index}, 'unite', this.value)">
+                    </td>
+                    <td class="px-4 py-4 text-right">
+                        <input type="number" value="${row.quantite}" 
+                               class="bg-white border border-zinc-300 focus:border-orange-500 rounded-xl px-3 py-2 w-24 text-right text-zinc-900 outline-none"
+                               onchange="updateEstimationRow(${index}, 'quantite', parseFloat(this.value))">
+                    </td>
+                    <td class="px-4 py-4 text-right">
+                        <input type="number" value="${row.prix}" 
+                               class="bg-white border border-zinc-300 focus:border-orange-500 rounded-xl px-3 py-2 w-28 text-right text-zinc-900 outline-none"
+                               onchange="updateEstimationRow(${index}, 'prix', parseFloat(this.value))">
+                    </td>
+                    <td class="px-6 py-4 text-right font-bold text-emerald-600 text-lg">
+                        ${montant.toLocaleString('fr-FR')}
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <button onclick="deleteEstimationRow(${index})" class="text-red-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-xl transition-all">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
                 tbody.appendChild(tr);
             });
             document.getElementById('estimation-total').innerHTML = total.toLocaleString('fr-FR');
         }
-        function updateEstimationRow(index, field, value) { estimationRows[index][field] = value; renderEstimation(); }
-        function deleteEstimationRow(index) { estimationRows.splice(index, 1); renderEstimation(); }
-        function addEstimationRow() { estimationRows.push({ designation: "Nouvelle ligne", unite: "m²", quantite: 1, prix: 0 }); renderEstimation(); }
+        function updateEstimationRow(index, field, value) { 
+            estimationRows[index][field] = value; 
+            saveCurrentEstimation();
+            renderEstimation(); 
+        }
+        function deleteEstimationRow(index) { 
+            estimationRows.splice(index, 1); 
+            saveCurrentEstimation();
+            renderEstimation(); 
+        }
+        function addEstimationRow() { 
+            if (!currentEstimationId) return;
+            estimationRows.push({ designation: "Nouvelle ligne", unite: "m²", quantite: 1, prix: 0 }); 
+            saveCurrentEstimation();
+            renderEstimation(); 
+        }
+
+        // ==================== GESTION MULTI-ESTIMATIONS ====================
+        function loadEstimations() {
+            const saved = localStorage.getItem('dimensionspro_estimations');
+            if (saved) {
+                estimations = JSON.parse(saved);
+            } else {
+                // Créer un premier tableau par défaut
+                estimations = [{
+                    id: 'est_' + Date.now(),
+                    name: 'Tableau 1',
+                    rows: [
+                        { designation: "Travaux de dépose", unite: "ENS", quantite: 1, prix: 100000 },
+                        { designation: "Mur de clôture", unite: "ml", quantite: 240, prix: 1500 }
+                    ]
+                }];
+                localStorage.setItem('dimensionspro_estimations', JSON.stringify(estimations));
+            }
+            
+            // Sélectionner le premier tableau si aucun n'est actif
+            if (!currentEstimationId && estimations.length > 0) {
+                currentEstimationId = estimations[0].id;
+            }
+        }
+
+        function saveEstimations() {
+            localStorage.setItem('dimensionspro_estimations', JSON.stringify(estimations));
+        }
+
+        function saveCurrentEstimation() {
+            if (!currentEstimationId) return;
+            const index = estimations.findIndex(e => e.id === currentEstimationId);
+            if (index !== -1) {
+                estimations[index].rows = [...estimationRows];
+                saveEstimations();
+            }
+        }
+
+        function renderEstimationTabs() {
+            const container = document.getElementById('estimation-tabs');
+            if (!container) return;
+            container.innerHTML = '';
+
+            estimations.forEach(est => {
+                const isActive = est.id === currentEstimationId;
+                const tab = document.createElement('div');
+                tab.className = `flex items-center gap-x-2 px-4 py-2 rounded-2xl cursor-pointer transition-all text-sm font-medium whitespace-nowrap ${
+                    isActive 
+                        ? 'bg-orange-500 text-white' 
+                        : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                }`;
+                
+                tab.innerHTML = `
+                    <span onclick="switchEstimation('${est.id}')">${est.name}</span>
+                    <button onclick="event.stopImmediatePropagation(); renameEstimation('${est.id}')" class="ml-1 text-xs opacity-70 hover:opacity-100">
+                        <i class="fa-solid fa-edit"></i>
+                    </button>
+                `;
+                container.appendChild(tab);
+            });
+        }
+
+        function switchEstimation(estimationId) {
+            // Sauvegarder l'ancien avant de changer
+            saveCurrentEstimation();
+            
+            currentEstimationId = estimationId;
+            const est = estimations.find(e => e.id === estimationId);
+            if (est) {
+                estimationRows = [...est.rows];
+            }
+            renderEstimationTabs();
+            renderEstimation();
+        }
+
+        function addNewEstimation() {
+            const newEst = {
+                id: 'est_' + Date.now(),
+                name: `Tableau ${estimations.length + 1}`,
+                rows: []
+            };
+            estimations.push(newEst);
+            saveEstimations();
+            
+            // Basculer vers le nouveau
+            switchEstimation(newEst.id);
+        }
+
+        function renameEstimation(estimationId) {
+            const est = estimations.find(e => e.id === estimationId);
+            if (!est) return;
+            
+            const newName = prompt("Nouveau nom du tableau :", est.name);
+            if (newName && newName.trim() !== '') {
+                est.name = newName.trim();
+                saveEstimations();
+                renderEstimationTabs();
+            }
+        }
+
+        function deleteCurrentEstimation() {
+            if (!currentEstimationId) return;
+            if (!confirm("Supprimer ce tableau d'estimation ?")) return;
+            
+            estimations = estimations.filter(e => e.id !== currentEstimationId);
+            
+            if (estimations.length === 0) {
+                // Recréer un tableau vide
+                const newEst = { id: 'est_' + Date.now(), name: 'Tableau 1', rows: [] };
+                estimations.push(newEst);
+                currentEstimationId = newEst.id;
+                estimationRows = [];
+            } else {
+                currentEstimationId = estimations[0].id;
+                estimationRows = [...estimations[0].rows];
+            }
+            
+            saveEstimations();
+            renderEstimationTabs();
+            renderEstimation();
+        }
+
+        // ==================== EXPORT ====================
+        function exportEstimationToPDF() {
+            if (!currentEstimationId || estimationRows.length === 0) {
+                alert("Aucune donnée à exporter.");
+                return;
+            }
+            
+            const est = estimations.find(e => e.id === currentEstimationId);
+            const doc = new window.jspdf.jsPDF();
+            
+            doc.setFontSize(18);
+            doc.text("Estimation des Travaux - " + est.name, 20, 20);
+            doc.setFontSize(11);
+            doc.text("Date : " + new Date().toLocaleDateString('fr-FR'), 20, 28);
+            
+            let y = 40;
+            doc.setFontSize(10);
+            
+            // En-têtes
+            doc.text("Désignation", 20, y);
+            doc.text("Unité", 90, y);
+            doc.text("Qté", 115, y);
+            doc.text("Prix U.", 135, y);
+            doc.text("Montant", 165, y);
+            y += 8;
+            
+            estimationRows.forEach(row => {
+                const montant = row.quantite * row.prix;
+                doc.text(row.designation.substring(0, 35), 20, y);
+                doc.text(row.unite, 90, y);
+                doc.text(String(row.quantite), 115, y);
+                doc.text(row.prix.toLocaleString('fr-FR'), 135, y);
+                doc.text(montant.toLocaleString('fr-FR'), 165, y);
+                y += 7;
+            });
+            
+            // Total
+            y += 5;
+            doc.setFontSize(12);
+            doc.text("TOTAL : " + document.getElementById('estimation-total').innerText + " MAD", 20, y);
+            
+            doc.save(`Estimation_${est.name.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        function exportEstimationToExcel() {
+            if (!currentEstimationId || estimationRows.length === 0) {
+                alert("Aucune donnée à exporter.");
+                return;
+            }
+            
+            const est = estimations.find(e => e.id === currentEstimationId);
+            let csv = "Désignation,Unité,Quantité,Prix unitaire,Montant\n";
+            
+            estimationRows.forEach(row => {
+                const montant = row.quantite * row.prix;
+                csv += `"${row.designation}","${row.unite}",${row.quantite},${row.prix},${montant}\n`;
+            });
+            
+            const total = document.getElementById('estimation-total').innerText.replace(/\s/g, '');
+            csv += `\nTOTAL,,,"${total} MAD"\n`;
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Estimation_${est.name.replace(/\s+/g, '_')}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
 
         // ==================== PROJETS ====================
         function filterProjects() { projectSearchTerm = document.getElementById('project-search').value.toLowerCase().trim(); renderProjectsGrid(); }
@@ -762,50 +1536,127 @@
 
             let filesHTML = '';
             if (project.plans && project.plans.length > 0) {
-                filesHTML = project.plans.map((plan, i) => `<div class="flex items-center justify-between bg-zinc-900 rounded-2xl px-4 py-3 mb-2"><div class="flex items-center gap-x-3"><i class="fa-solid fa-file-pdf text-orange-500 text-xl"></i><span class="font-medium">${plan.name}</span></div><div class="flex gap-x-2"><button onclick="downloadBase64PDF('${plan.data}', '${plan.name}')" class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded-xl flex items-center gap-x-2 hover:bg-emerald-700"><i class="fa-solid fa-download"></i> <span>Télécharger</span></button><button onclick="deletePlanFileFromDetail(${index}, ${i}, this)" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+                filesHTML = project.plans.map((plan, i) => {
+                    // Support ancien format (plan.data) + nouveau format (IndexedDB)
+                    let downloadAction = '';
+                    if (plan.storedInIndexedDB) {
+                        downloadAction = `downloadBase64PDF('${project.id}', '${plan.name}', true)`;
+                    } else if (plan.data) {
+                        downloadAction = `downloadBase64PDF('${plan.data}', '${plan.name}')`;
+                    } else {
+                        downloadAction = `alert('PDF non disponible')`;
+                    }
+                    return `<div class="flex items-center justify-between bg-zinc-900 rounded-2xl px-4 py-3 mb-2"><div class="flex items-center gap-x-3"><i class="fa-solid fa-file-pdf text-orange-500 text-xl"></i><span class="font-medium">${plan.name}</span></div><div class="flex gap-x-2"><button onclick="${downloadAction}" class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded-xl flex items-center gap-x-2 hover:bg-emerald-700"><i class="fa-solid fa-download"></i> <span>Télécharger</span></button><button onclick="deletePlanFileFromDetail(${index}, ${i}, this)" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700"><i class="fa-solid fa-trash"></i></button></div></div>`;
+                }).join('');
             } else { filesHTML = `<p class="text-zinc-500 italic py-4 text-center">Aucun PDF pour ce projet</p>`; }
 
             modal.innerHTML = `<div class="glass rounded-3xl w-full max-w-5xl border border-zinc-700 overflow-hidden max-h-[95vh] flex flex-col"><div class="relative h-64"><img src="${cover}" class="w-full h-full object-cover" alt=""><div class="absolute inset-0 bg-gradient-to-b from-black/60 to-black/90"></div><div class="absolute top-6 left-6 right-6 flex justify-between items-start"><div><div class="flex items-center gap-x-3"><span class="${phaseColor} text-sm font-bold px-4 py-1 rounded-full border border-current">${project.phase}</span></div><h2 class="text-white text-4xl font-bold mt-3">${project.name}</h2><p class="text-zinc-400 mt-1">${project.type} • ${project.lieu}</p></div><button onclick="this.closest('.fixed').remove()" class="text-white text-3xl hover:text-zinc-400">×</button></div></div><div class="flex-1 p-8 overflow-auto"><div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-1"><h4 class="font-semibold text-orange-400 mb-4 flex items-center gap-x-2"><i class="fa-solid fa-info-circle"></i> INFORMATIONS</h4><div class="space-y-4 text-sm"><div><span class="text-zinc-400">Maître d'ouvrage</span><br><span class="font-medium">${project.maitre}</span></div><div><span class="text-zinc-400">Phase actuelle</span><br><span class="font-medium ${phaseColor}">${project.phase}</span></div><div><span class="text-zinc-400">Date de création</span><br><span class="font-medium">${new Date(project.created || Date.now()).toLocaleDateString('fr-FR')}</span></div></div><div class="mt-6"><button onclick="changeProjectPhaseQuick(${index}, this)" class="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-sm flex items-center justify-center gap-x-2"><i class="fa-solid fa-sync"></i> Changer la phase</button></div></div><div class="lg:col-span-2"><div class="flex items-center justify-between mb-4"><h4 class="font-semibold text-orange-400 flex items-center gap-x-2"><i class="fa-solid fa-file-pdf"></i> DOCUMENTS PDF (${project.plans ? project.plans.length : 0})</h4><div class="flex gap-x-2"><button onclick="addPDFToProject(${index}, this)" class="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl text-sm flex items-center gap-x-2"><i class="fa-solid fa-plus"></i> <span>Ajouter PDF</span></button><button onclick="importPDFToProject(${index}, this)" class="px-5 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-2xl text-sm flex items-center gap-x-2"><i class="fa-solid fa-upload"></i> <span>Importer</span></button><button onclick="exportProjectPDF(${index})" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm flex items-center gap-x-2"><i class="fa-solid fa-download"></i> <span>Exporter</span></button></div></div><div class="max-h-[520px] overflow-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">${filesHTML}</div></div></div></div><div class="border-t border-zinc-800 p-6 flex justify-end"><button onclick="deleteProjectById('${project.id}'); this.closest('.fixed').remove()" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl">Supprimer</button></div></div>`;
             document.body.appendChild(modal);
         }
 
-        function uploadProjectCover(index) {
-            const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
-            input.onchange = function() {
-                const file = this.files[0]; if (!file) return;
+        // Compression d'image pour éviter de remplir localStorage
+        function compressImage(file, maxWidth = 1200, quality = 0.75) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    projects[index].cover = e.target.result; projects[index].updatedAt = new Date().toISOString(); saveProjects();
-                    if (typeof saveProjectToFirestore === 'function') saveProjectToFirestore(projects[index]);
-                    renderProjectsGrid();
-                    const openModals = document.querySelectorAll('.fixed.inset-0');
-                    openModals.forEach(modal => { if (modal.innerHTML.includes(projects[index].name) && modal.innerHTML.includes('INFORMATIONS')) { modal.remove(); setTimeout(() => showProjectDetail(index), 50); } });
-                    const toast = document.createElement('div'); toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl text-sm z-[100000]'; toast.innerHTML = `✅ Photo de couverture mise à jour !`; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Retourne en base64 compressé
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadProjectCover(index) {
+            const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
+            input.onchange = async function() {
+                const file = this.files[0]; if (!file) return;
+
+                try {
+                    // Compression de l'image avant sauvegarde
+                    const compressedBase64 = await compressImage(file, 1200, 0.75);
+                    
+                    projects[index].cover = compressedBase64;
+                    projects[index].updatedAt = new Date().toISOString();
+                    saveProjects();
+
+                    if (typeof saveProjectToFirestore === 'function') saveProjectToFirestore(projects[index]);
+                    renderProjectsGrid();
+
+                    // Recharger la modale si elle est ouverte
+                    const openModals = document.querySelectorAll('.fixed.inset-0');
+                    openModals.forEach(modal => { 
+                        if (modal.innerHTML.includes(projects[index].name) && modal.innerHTML.includes('INFORMATIONS')) { 
+                            modal.remove(); 
+                            setTimeout(() => showProjectDetail(index), 50); 
+                        } 
+                    });
+
+                    const toast = document.createElement('div'); 
+                    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl text-sm z-[100000]'; 
+                    toast.innerHTML = `✅ Photo de couverture mise à jour !`; 
+                    document.body.appendChild(toast); 
+                    setTimeout(() => toast.remove(), 2000);
+
+                } catch (err) {
+                    alert("Erreur lors du traitement de l'image.");
+                    console.error(err);
+                }
             };
             input.click();
         }
 
-        function addPDFToProject(index, btn) {
+        async function addPDFToProject(index, btn) {
             const input = document.createElement('input'); input.type = 'file'; input.accept = '.pdf';
-            input.onchange = function() {
+            input.onchange = async function() {
                 const file = this.files[0]; if (!file) return;
-
-                // Avertissement pour gros fichiers (> 8 Mo)
-                if (file.size > 8 * 1024 * 1024) {
-                    if (!confirm("Ce PDF fait plus de 8 Mo. Il risque de ne pas se télécharger correctement sur certains navigateurs. Continuer ?")) {
-                        return;
-                    }
+                if (file.size > 15 * 1024 * 1024) {
+                    if (!confirm("Ce PDF fait plus de 15 Mo. Il risque d'être lent. Continuer ?")) return;
                 }
-
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
+                    const base64 = e.target.result;
+                    const projectId = projects[index].id;
+
                     if (!projects[index].plans) projects[index].plans = [];
-                    projects[index].plans.push({ name: file.name, type: file.type, data: e.target.result });
-                    projects[index].updatedAt = new Date().toISOString(); saveProjects();
-                    if (typeof saveProjectToFirestore === 'function') saveProjectToFirestore(projects[index]);
-                    btn.closest('.fixed').remove(); showProjectDetail(index);
+                    
+                    // Stocker seulement les métadonnées dans localStorage
+                    projects[index].plans.push({ 
+                        name: file.name, 
+                        type: file.type,
+                        size: file.size,
+                        storedInIndexedDB: true   // ← Flag important
+                    });
+
+                    // Sauvegarder le contenu dans IndexedDB (beaucoup plus de place)
+                    try {
+                        await savePDFToIndexedDB(projectId, file.name, base64, file.name);
+                        projects[index].updatedAt = new Date().toISOString();
+                        saveProjects();
+                        if (typeof saveProjectToFirestore === 'function') saveProjectToFirestore(projects[index]);
+                        btn.closest('.fixed').remove(); 
+                        showProjectDetail(index);
+                    } catch (err) {
+                        alert("Erreur lors de la sauvegarde du PDF dans IndexedDB.");
+                        console.error(err);
+                    }
                 };
                 reader.readAsDataURL(file);
             };
@@ -813,10 +1664,21 @@
         }
         function importPDFToProject(index, btn) { addPDFToProject(index, btn); }
 
-        function deletePlanFileFromDetail(projectIndex, fileIndex, btn) {
+        async function deletePlanFileFromDetail(projectIndex, fileIndex, btn) {
             if (!confirm("Supprimer ce PDF ?")) return;
-            projects[projectIndex].plans.splice(fileIndex, 1); projects[projectIndex].updatedAt = new Date().toISOString(); saveProjects();
-            btn.closest('.fixed').remove(); showProjectDetail(projectIndex);
+            const plan = projects[projectIndex].plans[fileIndex];
+            const projectId = projects[projectIndex].id;
+
+            // Supprimer de IndexedDB si stocké là
+            if (plan.storedInIndexedDB) {
+                await deletePDFFromIndexedDB(projectId, plan.name);
+            }
+
+            projects[projectIndex].plans.splice(fileIndex, 1);
+            projects[projectIndex].updatedAt = new Date().toISOString();
+            saveProjects();
+            btn.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
         }
 
         function changeProjectPhaseQuick(index, btn) {
@@ -827,15 +1689,29 @@
 
         function deleteProjectById(projectId) {
             if (!confirm("Supprimer ce projet ?")) return;
+
+            const projectToDelete = projects.find(p => p.id === projectId);
+            const projectName = projectToDelete ? projectToDelete.name : null;
+
             projects = projects.filter(p => p.id !== projectId);
+
             let allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
-            allPlanning = allPlanning.filter(p => p.id !== projectId);
+            
+            // Nettoyer les entrées de planification liées à ce projet
+            if (projectName) {
+                allPlanning = allPlanning.filter(p => p.projectName !== projectName);
+            } else {
+                allPlanning = allPlanning.filter(p => p.id !== projectId);
+            }
+            
             localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning));
-            saveProjects(); renderPhasesTable();
+            saveProjects();
+            deleteProjectFromFirestore(projectId);
+            renderPhasesTable();
             if (typeof currentTab !== 'undefined' && currentTab === 2) renderPlanning();
         }
 
-        // ==================== EDIT PROJECT (CLEAN) ====================
+        // ==================== EDIT PROJECT ====================
         function editProjectDirect(index) {
             const p = projects[index]; if (!p) { alert("Erreur: Projet non trouvé"); return; }
             editingIndex = index;
@@ -854,9 +1730,10 @@
                 const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
                 container.innerHTML = '';
                 profiles.forEach(profile => {
+                    const displayName = profile.nom || profile.name || 'Utilisateur';
                     const div = document.createElement('div');
                     div.className = 'flex items-center gap-x-3 p-2 hover:bg-zinc-800 rounded-xl cursor-pointer';
-                    div.innerHTML = `<input type="checkbox" id="edit-assign-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500"><label for="edit-assign-${profile.id}" class="flex-1 cursor-pointer text-sm">${profile.nom || profile.name} ${profile.prenom || ''}</label>`;
+                    div.innerHTML = `<input type="checkbox" id="edit-assign-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500"><label for="edit-assign-${profile.id}" class="flex-1 cursor-pointer text-sm">${displayName}</label>`;
                     container.appendChild(div);
                 });
                 if (p.assignedProfiles) {
@@ -871,6 +1748,7 @@
         function hideEditProjectModal() {
             const modal = document.getElementById('edit-project-modal');
             if (modal) { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+            editingIndex = null; // reset
         }
 
         function saveEditProject() {
@@ -896,15 +1774,6 @@
         // ==================== ADD PROJECT ====================
         function showProjectModal() {
             const modal = document.getElementById('project-modal');
-            const titleEl = modal.querySelector('h2');
-            const buttons = modal.querySelectorAll('button');
-            if (titleEl) titleEl.innerHTML = "Ajouter un projet";
-            if (buttons.length > 0) {
-                const actionBtn = buttons[buttons.length - 1];
-                actionBtn.innerHTML = "Ajouter le projet";
-                actionBtn.onclick = createProject;
-                actionBtn.style.backgroundColor = "#f97316";
-            }
             modal.classList.remove('hidden'); modal.classList.add('flex');
             loadProfilesForProjectModal();
         }
@@ -915,9 +1784,10 @@
             container.innerHTML = '';
             if (profiles.length === 0) { container.innerHTML = '<p class="text-xs text-zinc-500">Aucun profil disponible</p>'; return; }
             profiles.forEach(profile => {
+                const displayName = profile.nom || profile.name || 'Utilisateur';
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-x-3 p-2 hover:bg-zinc-800 rounded-xl cursor-pointer';
-                div.innerHTML = `<input type="checkbox" id="assign-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500"><label for="assign-${profile.id}" class="flex-1 cursor-pointer text-sm">${profile.nom || profile.name} ${profile.prenom || ''}</label>`;
+                div.innerHTML = `<input type="checkbox" id="assign-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500"><label for="assign-${profile.id}" class="flex-1 cursor-pointer text-sm">${displayName}</label>`;
                 container.appendChild(div);
             });
         }
@@ -933,7 +1803,7 @@
             const assignedProfiles = Array.from(checkboxes).map(cb => cb.value);
 
             const projectId = 'proj_' + Date.now();
-            const newProject = { id: projectId, name: name, type: type, maitre: maitre, lieu: lieu, phase: "ESQUISSE", plan: null, assignedProfiles: assignedProfiles.length > 0 ? assignedProfiles : [currentProfile], createdBy: currentProfile, created: new Date().toISOString(), updatedAt: new Date().toISOString() };
+            const newProject = { id: projectId, name: name, type: type, maitre: maitre, lieu: lieu, phase: "ESQUISSE", assignedProfiles: assignedProfiles.length > 0 ? assignedProfiles : [currentProfile], createdBy: currentProfile, created: new Date().toISOString(), updatedAt: new Date().toISOString() };
             projects.push(newProject);
             saveProjects();
             saveProjectToFirestore(newProject);
@@ -947,10 +1817,7 @@
         function exportProjectPDF(index) {
             const project = projects[index];
             if (!project) return;
-
-            // Version compatible jspdf 2.5.1 UMD
             const doc = new window.jspdf.jsPDF();
-
             doc.setFontSize(18);
             doc.text("Dimensionspro - Fiche Projet", 20, 20);
             doc.setFontSize(12);
@@ -960,22 +1827,28 @@
             doc.text(`Lieu: ${project.lieu || ''}`, 20, 65);
             doc.text(`Phase: ${project.phase || ''}`, 20, 75);
             doc.text(`Date: ${new Date(project.created || Date.now()).toLocaleDateString('fr-FR')}`, 20, 85);
-
             if (project.plans && project.plans.length > 0) {
                 doc.text("Documents PDF:", 20, 100);
-                project.plans.forEach((plan, i) => {
-                    doc.text(`- ${plan.name}`, 25, 110 + (i * 8));
-                });
+                project.plans.forEach((plan, i) => { doc.text(`- ${plan.name}`, 25, 110 + (i * 8)); });
             }
-
             const safeName = (project.name || 'projet').replace(/[^a-z0-9]/gi, '_');
             doc.save(`Projet_${safeName}.pdf`);
         }
 
-        // ==================== TÉLÉCHARGEMENT ROBUSTE DES PDF (pour gros fichiers) ====================
-        function downloadBase64PDF(base64Data, filename) {
+        // Téléchargement PDF (support IndexedDB + ancien format)
+        async function downloadBase64PDF(base64DataOrProjectId, filenameOrPlanName, isFromIndexedDB = false) {
             try {
-                // Convert base64 to Blob (beaucoup plus fiable que href direct)
+                let base64Data = base64DataOrProjectId;
+
+                if (isFromIndexedDB) {
+                    const record = await getPDFFromIndexedDB(base64DataOrProjectId, filenameOrPlanName);
+                    if (!record || !record.base64) {
+                        alert("PDF introuvable dans le stockage sécurisé.");
+                        return;
+                    }
+                    base64Data = record.base64;
+                }
+
                 const byteCharacters = atob(base64Data.split(',')[1]);
                 const byteNumbers = new Array(byteCharacters.length);
                 for (let i = 0; i < byteCharacters.length; i++) {
@@ -983,32 +1856,15 @@
                 }
                 const byteArray = new Uint8Array(byteNumbers);
                 const blob = new Blob([byteArray], { type: 'application/pdf' });
-
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                a.href = url; a.download = filenameOrPlanName || 'document.pdf';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             } catch (e) {
-                alert("Erreur lors du téléchargement. Le fichier est peut-être trop volumineux pour le navigateur.");
+                alert("Erreur lors du téléchargement du PDF.");
                 console.error(e);
             }
-        }
-
-        // ==================== GOOGLE SHEETS EXPORT ====================
-        function exportToGoogleSheets() {
-            let csv = "Nom du projet,Type,Lieu,Maître d'ouvrage,Phase,Date de création,Profils assignés\n";
-            projects.forEach(p => {
-                const assigned = p.assignedProfiles ? p.assignedProfiles.join('; ') : '';
-                csv += `"${p.name || ''}","${p.type || ''}","${p.lieu || ''}","${p.maitre || ''}","${p.phase || ''}","${p.created || ''}","${assigned}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `dimensionspro_export_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);
-            return true;
         }
 
         // ==================== FIREBASE ====================
@@ -1027,8 +1883,17 @@
             try {
                 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore(); auth = firebase.auth(); isFirebaseReady = true;
-                auth.signInAnonymously().then(() => { console.log("%c[Firebase] Auth anonyme OK", "color:#22c55e"); attachRealtimeListeners(); }).catch(err => { console.error("[Firebase] Erreur auth:", err); showSyncError("Impossible de se connecter à Firebase"); });
-            } catch (e) { console.error("[Firebase] Erreur d'initialisation:", e); showSyncError("Firebase non disponible"); }
+                auth.signInAnonymously().then(() => { 
+                    console.log("%c[Firebase] Auth anonyme OK", "color:#22c55e"); 
+                    attachRealtimeListeners(); 
+                }).catch(err => { 
+                    console.error("[Firebase] Erreur auth:", err); 
+                    showSyncError("Impossible de se connecter à Firebase"); 
+                });
+            } catch (e) { 
+                console.error("[Firebase] Erreur d'initialisation:", e); 
+                showSyncError("Firebase non disponible"); 
+            }
         }
 
         function showSyncError(msg) {
@@ -1038,6 +1903,7 @@
 
         function attachRealtimeListeners() {
             if (!isFirebaseReady || !db) return;
+            
             if (unsubscribeProfiles) unsubscribeProfiles();
             unsubscribeProfiles = db.collection('profiles').onSnapshot((snapshot) => {
                 const profiles = []; snapshot.forEach(doc => profiles.push(doc.data()));
@@ -1048,24 +1914,28 @@
 
             if (unsubscribeProjects) unsubscribeProjects();
             unsubscribeProjects = db.collection('projects').onSnapshot((snapshot) => {
-                const projectsData = []; snapshot.forEach(doc => projectsData.push(doc.data()));
-                const currentLocal = JSON.parse(localStorage.getItem('dimensionspro_all_projects') || '[]');
-                let shouldUpdate = false;
-                if (projectsData.length !== currentLocal.length) shouldUpdate = true;
-                else {
-                    for (let i = 0; i < projectsData.length; i++) {
-                        const fb = projectsData[i]; const local = currentLocal.find(p => p.id === fb.id);
-                        if (!local || (fb.updatedAt && (!local.updatedAt || fb.updatedAt > local.updatedAt))) { shouldUpdate = true; break; }
+                const firebaseProjects = [];
+                snapshot.forEach(doc => firebaseProjects.push(doc.data()));
+                
+                const localProjects = JSON.parse(localStorage.getItem('dimensionspro_all_projects') || '[]');
+                
+                // Fusion intelligente : on garde les plans et cover locaux
+                const mergedProjects = firebaseProjects.map(fbProject => {
+                    const localProject = localProjects.find(p => p.id === fbProject.id);
+                    if (localProject) {
+                        if (localProject.plans && localProject.plans.length > 0) {
+                            fbProject.plans = localProject.plans;
+                        }
+                        if (localProject.cover) {
+                            fbProject.cover = localProject.cover;
+                        }
                     }
-                }
-                if (shouldUpdate) {
-                    projectsData.forEach(fbProject => {
-                        const localProject = currentLocal.find(p => p.id === fbProject.id);
-                        if (localProject) { if (localProject.plans && localProject.plans.length > 0) fbProject.plans = localProject.plans; if (localProject.cover) fbProject.cover = localProject.cover; }
-                    });
-                    localStorage.setItem('dimensionspro_all_projects', JSON.stringify(projectsData));
-                    if (currentTab === 1 && document.getElementById('main-app')) renderPhasesTable();
-                }
+                    return fbProject;
+                });
+                
+                localStorage.setItem('dimensionspro_all_projects', JSON.stringify(mergedProjects));
+                
+                if (currentTab === 1) renderProjectsGrid();
             }, err => console.error("[Firebase] Erreur projets:", err));
 
             if (unsubscribePlanning) unsubscribePlanning();
@@ -1083,24 +1953,95 @@
         async function forceSyncNow() {
             const container = document.getElementById('profiles-list');
             if (container) container.innerHTML = '<p class="text-zinc-400 text-sm text-center py-4">Synchronisation Firebase...</p>';
-            if (!isFirebaseReady || !db) { initFirebase(); setTimeout(() => { if (container) loadProfilesList(); }, 1500); return; }
+            
+            if (!isFirebaseReady || !db) { 
+                initFirebase(); 
+                setTimeout(() => { if (container) loadProfilesList(); }, 1500); 
+                return; 
+            }
+            
             try {
-                const [profilesSnap, projectsSnap, planningSnap] = await Promise.all([db.collection('profiles').get(), db.collection('projects').get(), db.collection('planning').get()]);
-                const profiles = []; profilesSnap.forEach(d => profiles.push(d.data())); localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
-                const projectsData = []; projectsSnap.forEach(d => projectsData.push(d.data())); localStorage.setItem('dimensionspro_all_projects', JSON.stringify(projectsData));
-                const planningData = []; planningSnap.forEach(d => planningData.push(d.data())); localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planningData));
+                const [profilesSnap, projectsSnap, planningSnap] = await Promise.all([
+                    db.collection('profiles').get(), 
+                    db.collection('projects').get(), 
+                    db.collection('planning').get()
+                ]);
+                
+                // Profils
+                const profiles = []; profilesSnap.forEach(d => profiles.push(d.data())); 
+                localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
+                
+                // Projets avec fusion intelligente
+                const firebaseProjects = []; projectsSnap.forEach(d => firebaseProjects.push(d.data()));
+                const localProjects = JSON.parse(localStorage.getItem('dimensionspro_all_projects') || '[]');
+                
+                const mergedProjects = firebaseProjects.map(fbProject => {
+                    const local = localProjects.find(p => p.id === fbProject.id);
+                    if (local) {
+                        if (local.plans && local.plans.length > 0) fbProject.plans = local.plans;
+                        if (local.cover) fbProject.cover = local.cover;
+                    }
+                    return fbProject;
+                });
+                localStorage.setItem('dimensionspro_all_projects', JSON.stringify(mergedProjects));
+                
+                // Planning
+                const planningData = []; planningSnap.forEach(d => planningData.push(d.data())); 
+                localStorage.setItem('dimensionspro_all_planning', JSON.stringify(planningData));
+                
                 if (container) loadProfilesList();
-                if (currentTab === 1) renderPhasesTable();
+                if (currentTab === 1) renderProjectsGrid();
                 if (currentTab === 2) renderPlanning();
                 if (currentTab === 3) renderMyTasks();
-                const toast = document.createElement('div'); toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl flex items-center gap-x-2'; toast.innerHTML = `<i class="fa-solid fa-sync fa-spin"></i> <span>Synchronisé avec Firebase !</span>`; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2200);
-            } catch (e) { console.error("[Firebase] Erreur forceSync:", e); const toast = document.createElement('div'); toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-2xl'; toast.innerHTML = `❌ Erreur de synchronisation`; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2500); }
+                
+                const toast = document.createElement('div'); 
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl flex items-center gap-x-2'; 
+                toast.innerHTML = `<i class="fa-solid fa-sync fa-spin"></i> <span>Synchronisé avec Firebase !</span>`; 
+                document.body.appendChild(toast); 
+                setTimeout(() => toast.remove(), 2200);
+            } catch (e) { 
+                console.error("[Firebase] Erreur forceSync:", e); 
+                const toast = document.createElement('div'); 
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-2xl'; 
+                toast.innerHTML = `❌ Erreur de synchronisation`; 
+                document.body.appendChild(toast); 
+                setTimeout(() => toast.remove(), 2500); 
+            }
         }
 
         async function saveProfileToFirestore(profile) { if (!isFirebaseReady || !db) return; try { await db.collection('profiles').doc(profile.id).set(profile, { merge: true }); } catch (e) { console.error("[Firebase] saveProfile:", e); } }
-        async function saveProjectToFirestore(project) { if (!isFirebaseReady || !db) return; try { const projectForFirebase = JSON.parse(JSON.stringify(project)); if (projectForFirebase.plans) { projectForFirebase.plans = projectForFirebase.plans.map(p => ({ name: p.name, type: p.type || 'application/pdf', uploadedAt: new Date().toISOString() })); } await db.collection('projects').doc(project.id).set(projectForFirebase, { merge: true }); } catch (e) { console.warn("[Firebase] Project sync skipped"); } }
+        
+        async function saveProjectToFirestore(project) { 
+            if (!isFirebaseReady || !db) return; 
+            try { 
+                const projectForFirebase = JSON.parse(JSON.stringify(project)); 
+                if (projectForFirebase.plans) { 
+                    projectForFirebase.plans = projectForFirebase.plans.map(p => ({ 
+                        name: p.name, 
+                        type: p.type || 'application/pdf', 
+                        uploadedAt: new Date().toISOString() 
+                    })); 
+                } 
+                await db.collection('projects').doc(project.id).set(projectForFirebase, { merge: true }); 
+            } catch (e) { 
+                console.warn("[Firebase] Project sync skipped (probablement trop gros)"); 
+            } 
+        }
+        
         async function savePlanningToFirestore(task) { if (!isFirebaseReady || !db) return; try { await db.collection('planning').doc(task.id).set(task, { merge: true }); } catch (e) { console.error("[Firebase] savePlanning:", e); } }
+        
         async function deleteProfileFromFirestore(profileId) { if (!isFirebaseReady || !db) return; try { await db.collection('profiles').doc(profileId).delete(); } catch (e) { console.error("[Firebase] deleteProfile:", e); } }
+
+        // NOUVELLE FONCTION - Suppression projet dans Firebase
+        async function deleteProjectFromFirestore(projectId) {
+            if (!isFirebaseReady || !db) return;
+            try {
+                await db.collection('projects').doc(projectId).delete();
+                console.log("[Firebase] Projet supprimé:", projectId);
+            } catch (e) {
+                console.error("[Firebase] deleteProject:", e);
+            }
+        }
 
         // ==================== PLANIFICATION ====================
         function renderPlanning() {
@@ -1123,55 +2064,261 @@
 
         function showMonthCalendar(monthIndex) {
             const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
-            const myTasks = allPlanning.filter(task => {
+            let myTasks = allPlanning.filter(task => {
                 if (task.year !== undefined && task.month !== undefined) return task.year === currentPlanningYear && task.month === monthIndex;
-                if (!task.date) return false; const taskDate = new Date(task.date); return taskDate.getFullYear() === currentPlanningYear && taskDate.getMonth() === monthIndex;
+                if (!task.date) return false; 
+                const taskDate = new Date(task.date); 
+                return taskDate.getFullYear() === currentPlanningYear && taskDate.getMonth() === monthIndex;
             });
+
             const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
+
             const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/90 z-[99999] flex items-center justify-center';
-            modal.innerHTML = `<div class="glass rounded-3xl p-8 w-full max-w-4xl border border-zinc-700 max-h-[90vh] overflow-auto"><div class="flex justify-between items-center mb-8"><div><h3 class="text-3xl font-bold">${monthNames[monthIndex]} ${currentPlanningYear}</h3><p class="text-zinc-400">${myTasks.length} tâche(s) planifiée(s)</p></div><button onclick="this.closest('.fixed').remove()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-times text-3xl"></i></button></div><div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">${Array.from({length: 31}, (_, i) => i + 1).map(day => { const dayTasks = myTasks.filter(t => { if (t.day !== undefined) return t.day === day; return new Date(t.date).getDate() === day; }); return `<div class="border border-zinc-700 rounded-2xl p-4 min-h-[100px]"><div class="font-bold text-lg mb-3 flex items-center justify-between"><span>${day}</span>${dayTasks.length > 0 ? `<span class="text-xs bg-orange-500 px-2 py-0.5 rounded-full">${dayTasks.length}</span>` : ''}</div>${dayTasks.length > 0 ? dayTasks.map(task => `<div onclick="showProjectDetails('${task.id}'); this.closest('.fixed').remove();" class="text-sm bg-zinc-900 hover:bg-zinc-700 cursor-pointer rounded-xl px-3 py-2 mb-2">${task.projectName}</div>`).join('') : '<div class="text-xs text-zinc-500 italic">Aucune tâche</div>'}</div>`; }).join('')}</div></div>`;
+            modal.className = 'fixed inset-0 bg-black/80 z-[99999] flex items-center justify-center p-4';
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[92vh] overflow-auto shadow-2xl">
+                    <!-- Header -->
+                    <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
+                        <div>
+                            <h3 class="text-3xl font-bold text-zinc-900">${monthNames[monthIndex]} ${currentPlanningYear}</h3>
+                            <p class="text-zinc-500">${myTasks.length} tâche(s) planifiée(s)</p>
+                        </div>
+                        <button onclick="this.closest('.fixed').remove()" class="text-3xl text-zinc-400 hover:text-zinc-600">×</button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="p-6 border-b bg-zinc-50">
+                        <div class="relative">
+                            <input type="text" id="month-search" placeholder="Rechercher un projet..." 
+                                   class="w-full bg-white border border-zinc-300 focus:border-orange-500 rounded-2xl pl-12 py-3 text-lg outline-none">
+                            <i class="fa-solid fa-search absolute left-5 top-4 text-zinc-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3" id="calendar-grid">
+                            ${Array.from({length: 31}, (_, i) => {
+                                const day = i + 1;
+                                const dayTasks = myTasks.filter(t => {
+                                    if (t.day !== undefined) return t.day === day;
+                                    return new Date(t.date).getDate() === day;
+                                });
+                                return `
+                                    <div class="border border-zinc-200 rounded-2xl p-4 min-h-[110px] bg-white">
+                                        <div class="font-bold text-lg mb-2 flex items-center justify-between text-zinc-800">
+                                            <span>${day}</span>
+                                            ${dayTasks.length > 0 ? `<span class="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">${dayTasks.length}</span>` : ''}
+                                        </div>
+                                        ${dayTasks.length > 0 
+                                            ? dayTasks.map(task => `
+                                                <div onclick="showProjectDetails('${task.id}'); this.closest('.fixed').remove();" 
+                                                     class="text-sm bg-zinc-100 hover:bg-orange-100 cursor-pointer rounded-xl px-3 py-1.5 mb-1.5 text-zinc-800 font-medium">
+                                                    ${task.projectName}
+                                                </div>`).join('')
+                                            : '<div class="text-xs text-zinc-400 italic mt-2">Aucune tâche</div>'
+                                        }
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Search Results -->
+                    <div id="search-results" class="hidden p-6 border-t"></div>
+                </div>
+            `;
+
             document.body.appendChild(modal);
+
+            // Search functionality
+            const searchInput = modal.querySelector('#month-search');
+            const searchResults = modal.querySelector('#search-results');
+            const calendarGrid = modal.querySelector('#calendar-grid');
+
+            searchInput.oninput = () => {
+                const term = searchInput.value.toLowerCase().trim();
+
+                if (!term) {
+                    searchResults.classList.add('hidden');
+                    calendarGrid.style.display = 'grid';
+                    return;
+                }
+
+                calendarGrid.style.display = 'none';
+                searchResults.classList.remove('hidden');
+
+                const filtered = myTasks.filter(task => 
+                    task.projectName.toLowerCase().includes(term)
+                );
+
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = `<p class="text-center text-zinc-500 py-8">Aucun projet trouvé pour "${term}"</p>`;
+                    return;
+                }
+
+                let html = `<h4 class="font-semibold text-zinc-700 mb-4">Résultats pour "${term}"</h4><div class="space-y-3">`;
+
+                filtered.forEach(task => {
+                    const taskProfiles = task.assignedProfiles ? task.assignedProfiles.map(id => {
+                        const p = profiles.find(pr => pr.id === id);
+                        return p ? (p.nom || p.name) : 'Inconnu';
+                    }).join(', ') : 'Aucun';
+
+                    html += `
+                        <div onclick="showProjectDetails('${task.id}'); this.closest('.fixed').remove();" 
+                             class="flex justify-between items-center bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-2xl p-4 cursor-pointer">
+                            <div>
+                                <div class="font-semibold text-zinc-900">${task.projectName}</div>
+                                <div class="text-sm text-zinc-500">${new Date(task.date).toLocaleDateString('fr-FR')}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-zinc-400">Profils</div>
+                                <div class="text-sm text-zinc-700">${taskProfiles}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                searchResults.innerHTML = html;
+            };
         }
 
         function showPlanningModal() {
             const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
             const container = document.getElementById('planning-profiles-list'); container.innerHTML = '';
             profiles.forEach(profile => {
+                const displayName = profile.nom || profile.name || 'Utilisateur';
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-x-3 p-2 hover:bg-zinc-800 rounded-xl cursor-pointer';
-                div.innerHTML = `<input type="checkbox" id="profile-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500"><label for="profile-${profile.id}" class="flex-1 cursor-pointer"><div class="font-medium">${profile.nom || profile.name} ${profile.prenom || ''}</div></label>`;
+                div.innerHTML = `<input type="checkbox" id="profile-${profile.id}" value="${profile.id}" class="w-4 h-4 accent-orange-500"><label for="profile-${profile.id}" class="flex-1 cursor-pointer"><div class="font-medium">${displayName}</div></label>`;
                 container.appendChild(div);
             });
+
+            // Reset to single day by default
+            const singleRadio = document.querySelector('input[name="planning-type"][value="single"]');
+            if (singleRadio) singleRadio.checked = true;
+            document.getElementById('single-day-inputs').style.opacity = '1';
+            document.getElementById('multiple-days-input').classList.add('hidden');
+
             document.getElementById('planning-modal').classList.remove('hidden'); document.getElementById('planning-modal').classList.add('flex');
         }
 
         function closePlanningModal() { document.getElementById('planning-modal').classList.remove('flex'); document.getElementById('planning-modal').classList.add('hidden'); }
 
+        function togglePlanningType() {
+            const singleInputs = document.getElementById('single-day-inputs');
+            const multipleInput = document.getElementById('multiple-days-input');
+            const checked = document.querySelector('input[name="planning-type"]:checked').value;
+
+            if (checked === 'multiple') {
+                singleInputs.style.opacity = '0.7';
+                multipleInput.classList.remove('hidden');
+            } else {
+                singleInputs.style.opacity = '1';
+                multipleInput.classList.add('hidden');
+            }
+        }
+
         function savePlanningTask() {
             const projectName = document.getElementById('planning-project-name').value.trim();
+            if (!projectName) { alert("Veuillez entrer un nom de projet"); return; }
+
             const year = parseInt(document.getElementById('planning-year').value);
             const month = parseInt(document.getElementById('planning-month').value);
             const day = parseInt(document.getElementById('planning-day').value);
-            if (!projectName) { alert("Veuillez entrer un nom de projet"); return; }
-            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            if (day < 1 || day > daysInMonth) { alert(`Jour invalide ! Ce mois a ${daysInMonth} jours.`); return; }
+
             const checkboxes = document.querySelectorAll('#planning-profiles-list input[type="checkbox"]:checked');
             const assignedProfiles = Array.from(checkboxes).map(cb => cb.value);
             if (assignedProfiles.length === 0) { alert("Veuillez sélectionner au moins un profil"); return; }
 
+            const planningType = document.querySelector('input[name="planning-type"]:checked').value;
             const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
-            allPlanning.push({ id: 'plan_' + Date.now(), projectName: projectName, date: dateString, year: year, month: month, day: day, assignedProfiles: assignedProfiles, createdBy: currentProfile, created: new Date().toISOString() });
-            localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning));
-            savePlanningToFirestore(allPlanning[allPlanning.length - 1]);
 
             const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            const dateLabel = `${day} ${monthNames[month]} ${year}`;
-            assignedProfiles.forEach(profileId => { if (profileId !== currentProfile) sendNotification(profileId, `Vous avez été ajouté au projet "${projectName}" le ${dateLabel}`); });
 
-            closePlanningModal(); renderPlanning();
-            const toast = document.createElement('div'); toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl'; toast.innerHTML = `✅ Projet "${projectName}" ajouté pour le ${dateLabel} !`; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2500);
+            if (planningType === 'single') {
+                // === Un seul jour ===
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                if (day < 1 || day > daysInMonth) { alert(`Jour invalide ! Ce mois a ${daysInMonth} jours.`); return; }
+
+                allPlanning.push({
+                    id: 'plan_' + Date.now(),
+                    projectName: projectName,
+                    date: dateString,
+                    year: year,
+                    month: month,
+                    day: day,
+                    assignedProfiles: assignedProfiles,
+                    createdBy: currentProfile,
+                    created: new Date().toISOString()
+                });
+
+                const dateLabel = `${day} ${monthNames[month]} ${year}`;
+                assignedProfiles.forEach(profileId => {
+                    if (profileId !== currentProfile) sendNotification(profileId, `Vous avez été ajouté au projet "${projectName}" le ${dateLabel}`);
+                });
+
+            } else {
+                // === Plusieurs jours (personnalisé) ===
+                const duration = parseInt(document.getElementById('planning-duration').value) || 5;
+                let currentDate = new Date(year, month, day);
+
+                for (let i = 0; i < duration; i++) {
+                    const d = new Date(currentDate);
+                    const taskYear = d.getFullYear();
+                    const taskMonth = d.getMonth();
+                    const taskDay = d.getDate();
+
+                    const dateString = `${taskYear}-${String(taskMonth + 1).padStart(2, '0')}-${String(taskDay).padStart(2, '0')}`;
+
+                    allPlanning.push({
+                        id: 'plan_' + Date.now() + '_' + i,
+                        projectName: projectName,
+                        date: dateString,
+                        year: taskYear,
+                        month: taskMonth,
+                        day: taskDay,
+                        assignedProfiles: assignedProfiles,
+                        createdBy: currentProfile,
+                        created: new Date().toISOString(),
+                        durationDays: duration
+                    });
+
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                const startLabel = `${day} ${monthNames[month]}`;
+                assignedProfiles.forEach(profileId => {
+                    if (profileId !== currentProfile) {
+                        sendNotification(profileId, `Vous avez été ajouté au projet "${projectName}" pour ${duration} jours à partir du ${startLabel}`);
+                    }
+                });
+            }
+
+            localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning));
+
+            // Mettre à jour le badge
+            if (assignedProfiles.includes(currentProfile)) {
+                updateNotificationBadge();
+            }
+
+            closePlanningModal();
+            renderPlanning();
+
+            const toastMsg = planningType === 'week' 
+                ? `✅ Projet "${projectName}" ajouté pour toute la semaine !` 
+                : `✅ Projet "${projectName}" ajouté !`;
+
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl';
+            toast.innerHTML = toastMsg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
         }
 
         function sendNotification(profileId, message) {
@@ -1190,41 +2337,234 @@
         function showNotifications() {
             const notifications = JSON.parse(localStorage.getItem('dimensionspro_notifications_' + currentProfile) || '[]');
             const container = document.getElementById('notifications-list'); container.innerHTML = '';
-            if (notifications.length === 0) { container.innerHTML = '<p class="text-zinc-400 text-center py-8">Aucune notification</p>'; } else {
+
+            if (notifications.length === 0) {
+                container.innerHTML = '<p class="text-zinc-400 text-center py-8">Aucune notification</p>';
+            } else {
                 notifications.forEach((notif, index) => {
                     const div = document.createElement('div');
-                    div.className = `p-4 rounded-2xl ${notif.read ? 'bg-zinc-900' : 'bg-zinc-800 border border-orange-500'}`;
-                    div.innerHTML = `<div class="text-sm">${notif.message}</div><div class="text-xs text-zinc-500 mt-1">${new Date(notif.date).toLocaleDateString('fr-FR')}</div>`;
+                    div.className = `p-4 pr-10 rounded-2xl relative ${notif.read ? 'bg-zinc-900' : 'bg-zinc-800 border border-orange-500'}`;
+                    
+                    div.innerHTML = `
+                        <div class="text-sm pr-6">${notif.message}</div>
+                        <div class="text-xs text-zinc-500 mt-1">${new Date(notif.date).toLocaleDateString('fr-FR')}</div>
+                        
+                        <!-- Bouton supprimer -->
+                        <button onclick="event.stopImmediatePropagation(); deleteNotification(${index}, this)" 
+                                class="absolute top-3 right-3 text-red-400 hover:text-red-500 p-1">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    `;
+                    
+                    // Cliquer sur la notif la marque comme lue
                     div.onclick = () => markNotificationAsRead(index);
                     container.appendChild(div);
                 });
             }
-            document.getElementById('notifications-modal').classList.remove('hidden'); document.getElementById('notifications-modal').classList.add('flex');
+
+            // Ajouter bouton "Tout supprimer" si il y a des notifications
+            if (notifications.length > 0) {
+                const deleteAllBtn = document.createElement('button');
+                deleteAllBtn.className = 'mt-4 w-full py-2 text-sm text-red-400 hover:text-red-500 flex items-center justify-center gap-x-2';
+                deleteAllBtn.innerHTML = `<i class="fa-solid fa-trash"></i> <span>Tout supprimer</span>`;
+                deleteAllBtn.onclick = deleteAllNotifications;
+                container.appendChild(deleteAllBtn);
+            }
+
+            document.getElementById('notifications-modal').classList.remove('hidden'); 
+            document.getElementById('notifications-modal').classList.add('flex');
         }
 
         function markNotificationAsRead(index) {
             const notifications = JSON.parse(localStorage.getItem('dimensionspro_notifications_' + currentProfile) || '[]');
             notifications[index].read = true; localStorage.setItem('dimensionspro_notifications_' + currentProfile, JSON.stringify(notifications));
-            closeNotifications(); updateNotificationBadge();
+            closeNotifications();
+            updateNotificationBadge();
         }
 
-        function closeNotifications() { document.getElementById('notifications-modal').classList.remove('flex'); document.getElementById('notifications-modal').classList.add('hidden'); updateNotificationBadge(); }
+        function closeNotifications() { 
+            document.getElementById('notifications-modal').classList.remove('flex'); 
+            document.getElementById('notifications-modal').classList.add('hidden'); 
+            updateNotificationBadge(); 
+        }
+
+        // Supprimer une notification
+        function deleteNotification(index, element) {
+            if (!confirm("Supprimer cette notification ?")) return;
+
+            let notifications = JSON.parse(localStorage.getItem('dimensionspro_notifications_' + currentProfile) || '[]');
+            notifications.splice(index, 1);
+            localStorage.setItem('dimensionspro_notifications_' + currentProfile, JSON.stringify(notifications));
+
+            // Recharger la liste
+            showNotifications();
+            updateNotificationBadge();
+        }
+
+        // Supprimer toutes les notifications
+        function deleteAllNotifications() {
+            if (!confirm("Supprimer toutes les notifications ?")) return;
+
+            localStorage.removeItem('dimensionspro_notifications_' + currentProfile);
+            showNotifications();
+            updateNotificationBadge();
+        }
 
         // ==================== MES TÂCHES ====================
         function renderMyTasks() {
             const container = document.getElementById('my-tasks-content'); container.innerHTML = '';
             const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
-            const myProjects = allPlanning.filter(p => p.assignedProfiles && p.assignedProfiles.includes(currentProfile) && p.date && !isNaN(new Date(p.date).getTime()));
-            if (myProjects.length === 0) {
+            
+            // Grouper par nom de projet
+            const grouped = {};
+            allPlanning.forEach(p => {
+                if (p.assignedProfiles && p.assignedProfiles.includes(currentProfile) && p.date && !isNaN(new Date(p.date).getTime())) {
+                    if (!grouped[p.projectName]) {
+                        grouped[p.projectName] = [];
+                    }
+                    grouped[p.projectName].push(p);
+                }
+            });
+
+            const projectNames = Object.keys(grouped);
+
+            if (projectNames.length === 0) {
                 container.innerHTML = `<div class="text-center py-12"><i class="fa-solid fa-tasks text-6xl text-zinc-700 mb-4"></i><p class="text-xl text-zinc-400">Aucun projet assigné</p><p class="text-sm text-zinc-500 mt-2">Tu seras notifié quand on t'ajoutera à un projet</p></div>`;
                 return;
             }
-            const personalTasks = JSON.parse(localStorage.getItem('dimensionspro_personal_tasks_' + currentProfile) || '[]');
-            myProjects.forEach(project => {
-                const projectTasks = personalTasks.filter(t => t.projectId === project.id);
-                const projectHTML = `<div class="glass rounded-3xl p-6 border border-zinc-800"><div class="flex justify-between items-center mb-6"><div><h4 class="font-bold text-xl">${project.projectName}</h4><div class="text-sm text-zinc-400">${new Date(project.date).toLocaleDateString('fr-FR')}</div></div><button onclick="addPersonalTask('${project.id}')" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-2xl flex items-center gap-x-2"><i class="fa-solid fa-plus"></i> <span>Ajouter tâche</span></button></div><div class="space-y-2">${projectTasks.length > 0 ? projectTasks.map((task, index) => `<div class="flex items-center justify-between bg-zinc-900 rounded-2xl px-4 py-3"><div class="flex items-center gap-x-3"><input type="checkbox" ${task.done ? 'checked' : ''} onchange="togglePersonalTask('${project.id}', ${index}, this.checked)" class="w-5 h-5 accent-orange-500"><span class="${task.done ? 'line-through text-zinc-500' : ''}">${task.text}</span></div><button onclick="deletePersonalTask('${project.id}', ${task.id})" class="text-red-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div>`).join('') : '<p class="text-sm text-zinc-500 italic py-4">Aucune tâche personnelle. Ajoute tes tâches ci-dessus.</p>'}</div></div>`;
-                container.innerHTML += projectHTML;
+
+            projectNames.forEach(projectName => {
+                const days = grouped[projectName];
+                const sortedDays = days.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                const card = document.createElement('div');
+                card.className = 'glass rounded-3xl p-6 border border-zinc-800 mb-4 cursor-pointer hover:border-orange-500 transition-all';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-xl">${projectName}</h4>
+                            <div class="text-sm text-zinc-400 mt-1">${sortedDays.length} jour(s) planifié(s)</div>
+                        </div>
+                        <button onclick="event.stopImmediatePropagation(); showProjectDaysModal('${projectName}')" 
+                                class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-2xl flex items-center gap-x-2">
+                            <i class="fa-solid fa-calendar"></i> 
+                            <span>Voir les jours</span>
+                        </button>
+                    </div>
+                `;
+                card.onclick = () => showProjectDaysModal(projectName);
+                container.appendChild(card);
             });
+        }
+
+        // Afficher les jours d'un projet avec tâches par jour
+        function showProjectDaysModal(projectName) {
+            const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
+            const myDays = allPlanning
+                .filter(p => p.projectName === projectName && p.assignedProfiles && p.assignedProfiles.includes(currentProfile))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const personalTasks = JSON.parse(localStorage.getItem('dimensionspro_personal_tasks_' + currentProfile) || '[]');
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/90 z-[99999] flex items-center justify-center p-4';
+
+            let html = `
+                <div class="bg-white rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-auto">
+                    <div class="p-6 border-b flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-zinc-900">${projectName}</h3>
+                            <p class="text-zinc-500">${myDays.length} jours planifiés</p>
+                        </div>
+                        <button onclick="this.closest('.fixed').remove()" class="text-3xl text-zinc-400 hover:text-zinc-600">×</button>
+                    </div>
+                    <div class="p-6 space-y-6">
+            `;
+
+            myDays.forEach(day => {
+                const dayTasks = personalTasks.filter(t => t.projectId === day.id);
+                const dateStr = new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+                html += `
+                    <div class="border border-zinc-200 rounded-2xl p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="font-semibold text-lg text-zinc-800">${dateStr}</div>
+                            <button onclick="addPersonalTaskToDay('${day.id}', this)" class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded-xl flex items-center gap-x-2">
+                                <i class="fa-solid fa-plus"></i> <span>Ajouter tâche</span>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            ${dayTasks.length > 0 ? dayTasks.map(task => `
+                                <div class="flex items-center justify-between bg-zinc-50 rounded-xl px-4 py-3">
+                                    <div class="flex items-center gap-x-3">
+                                        <input type="checkbox" ${task.done ? 'checked' : ''} 
+                                               onchange="togglePersonalTask('${day.id}', '${task.id}', this.checked)" 
+                                               class="w-5 h-5 accent-orange-500">
+                                        <span class="${task.done ? 'line-through text-zinc-400' : 'text-zinc-800'}">${task.text}</span>
+                                    </div>
+                                    <button onclick="deletePersonalTaskFromDay('${day.id}', '${task.id}', this)" class="text-red-400 hover:text-red-600">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            `).join('') : `<p class="text-sm text-zinc-400 italic py-2">Aucune tâche pour ce jour</p>`}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            modal.innerHTML = html;
+            document.body.appendChild(modal);
+        }
+
+        // Ajouter une tâche à un jour spécifique
+        function addPersonalTaskToDay(planningId, btn) {
+            const text = prompt("Description de ta tâche pour ce jour :");
+            if (!text) return;
+
+            const personalTasks = JSON.parse(localStorage.getItem('dimensionspro_personal_tasks_' + currentProfile) || '[]');
+            personalTasks.push({
+                id: Date.now(),
+                projectId: planningId,
+                text: text,
+                done: false,
+                created: new Date().toISOString()
+            });
+            localStorage.setItem('dimensionspro_personal_tasks_' + currentProfile, JSON.stringify(personalTasks));
+
+            // Recharger la modale
+            btn.closest('.fixed').remove();
+            // Trouver le nom du projet pour réouvrir la bonne modale
+            const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
+            const day = allPlanning.find(p => p.id === planningId);
+            if (day) {
+                setTimeout(() => showProjectDaysModal(day.projectName), 100);
+            }
+        }
+
+        function togglePersonalTask(projectId, taskId, done) {
+            const personalTasks = JSON.parse(localStorage.getItem('dimensionspro_personal_tasks_' + currentProfile) || '[]');
+            const task = personalTasks.find(t => t.id == taskId && t.projectId === projectId);
+            if (task) task.done = done;
+            localStorage.setItem('dimensionspro_personal_tasks_' + currentProfile, JSON.stringify(personalTasks));
+            // Re-render the modal would be better, but for simplicity we refresh the whole tab
+            renderMyTasks();
+        }
+
+        function deletePersonalTaskFromDay(projectId, taskId, element) {
+            if (!confirm("Supprimer cette tâche ?")) return;
+            const personalTasks = JSON.parse(localStorage.getItem('dimensionspro_personal_tasks_' + currentProfile) || '[]');
+            const newTasks = personalTasks.filter(t => !(t.id == taskId && t.projectId === projectId));
+            localStorage.setItem('dimensionspro_personal_tasks_' + currentProfile, JSON.stringify(newTasks));
+            element.closest('.fixed').remove();
+            
+            // Reopen modal
+            const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
+            const day = allPlanning.find(p => p.id === projectId);
+            if (day) {
+                setTimeout(() => showProjectDaysModal(day.projectName), 80);
+            }
         }
 
         function addPersonalTask(projectId) {
@@ -1253,10 +2593,29 @@
         }
 
         function deleteAllPersonalTasks() {
-            if (!confirm("Supprimer TOUTES tes tâches personnelles ?")) return;
+            if (!confirm("Supprimer TOUTES tes tâches personnelles ?\n\nAttention : cela va aussi te retirer de tous les projets planifiés.")) return;
+
+            // 1. Supprimer toutes les tâches personnelles
             localStorage.removeItem('dimensionspro_personal_tasks_' + currentProfile);
+
+            // 2. Retirer le profil de tous les projets planifiés
+            let allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
+            allPlanning = allPlanning.map(p => {
+                if (p.assignedProfiles && p.assignedProfiles.includes(currentProfile)) {
+                    p.assignedProfiles = p.assignedProfiles.filter(id => id !== currentProfile);
+                }
+                return p;
+            }).filter(p => p.assignedProfiles && p.assignedProfiles.length > 0); // Supprimer les projets qui n'ont plus personne
+
+            localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning));
+
             renderMyTasks();
-            const toast = document.createElement('div'); toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl'; toast.innerHTML = `✅ Toutes tes tâches ont été supprimées !`; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
+
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl';
+            toast.innerHTML = `✅ Toutes tes tâches ont été supprimées et tu as été retiré des projets.`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         // ==================== SURFACES ====================
@@ -1265,12 +2624,20 @@
             const rdc = parseFloat(document.getElementById('surface-rdc').value) || 0;
             const etages = parseFloat(document.getElementById('nb-etages').value) || 0;
             const surfaceEtage = parseFloat(document.getElementById('surface-etage').value) || 0;
+            const cos = parseFloat(document.getElementById('cos').value) || 0;
+
             const plancher = rdc + (etages * surfaceEtage);
             const habitable = Math.round(plancher * 0.81);
-            const volume = Math.round(plancher * 3.2);
+
+            // Calcul COS : Surface constructible = Terrain × COS%
+            const surfaceConstructible = Math.round(terrain * (cos / 100));
+
+            // Mise à jour des affichages
             document.getElementById('surface-plancher').innerHTML = plancher.toLocaleString('fr-FR');
             document.getElementById('surface-habitable').innerHTML = habitable.toLocaleString('fr-FR');
-            document.getElementById('volume-total').innerHTML = volume.toLocaleString('fr-FR');
+
+            const cosEl = document.getElementById('surface-cos');
+            if (cosEl) cosEl.innerHTML = surfaceConstructible.toLocaleString('fr-FR');
         }
 
         // ==================== SETTINGS ====================
@@ -1282,7 +2649,8 @@
             document.getElementById('settings-telephone').value = profile.telephone || '';
             const initialEl = document.getElementById('settings-avatar-initial');
             const imgEl = document.getElementById('settings-avatar-img');
-            if (profile.avatar) { imgEl.src = profile.avatar; imgEl.classList.remove('hidden'); initialEl.classList.add('hidden'); } else { initialEl.textContent = (profile.nom || profile.name || 'A').charAt(0).toUpperCase(); imgEl.classList.add('hidden'); initialEl.classList.remove('hidden'); }
+            const displayName = profile.nom || profile.name || 'A';
+            if (profile.avatar) { imgEl.src = profile.avatar; imgEl.classList.remove('hidden'); initialEl.classList.add('hidden'); } else { initialEl.textContent = displayName.charAt(0).toUpperCase(); imgEl.classList.add('hidden'); initialEl.classList.remove('hidden'); }
             const passStatus = document.getElementById('password-status');
             passStatus.innerHTML = profile.password ? `<span class="text-emerald-400">✓ Défini</span>` : `Non défini`;
             document.getElementById('settings-modal').classList.remove('hidden'); document.getElementById('settings-modal').classList.add('flex');
@@ -1307,17 +2675,38 @@
             profiles[profileIndex].nom = document.getElementById('settings-nom').value.trim();
             profiles[profileIndex].prenom = document.getElementById('settings-prenom').value.trim();
             profiles[profileIndex].telephone = document.getElementById('settings-telephone').value.trim();
+            
+            // Met à jour aussi le champ name pour compatibilité
+            profiles[profileIndex].name = (profiles[profileIndex].nom || '') + ' ' + (profiles[profileIndex].prenom || '').trim();
+
             if (window.tempAvatar) { profiles[profileIndex].avatar = window.tempAvatar; window.tempAvatar = null; }
             localStorage.setItem('dimensionspro_profiles', JSON.stringify(profiles));
-            document.getElementById('profile-name').innerHTML = profiles[profileIndex].nom || profiles[profileIndex].name;
+            
+            const displayName = profiles[profileIndex].nom || profiles[profileIndex].name;
+            document.getElementById('profile-name').innerHTML = displayName;
             const avatarContainer = document.getElementById('profile-avatar');
-            if (avatarContainer && profiles[profileIndex].avatar) { avatarContainer.innerHTML = `<img src="${profiles[profileIndex].avatar}" class="w-full h-full object-cover rounded-xl">`; } else if (avatarContainer) { avatarContainer.innerHTML = (profiles[profileIndex].nom || profiles[profileIndex].name || 'A').charAt(0); }
+            if (avatarContainer && profiles[profileIndex].avatar) { 
+                avatarContainer.innerHTML = `<img src="${profiles[profileIndex].avatar}" class="w-full h-full object-cover rounded-xl">`; 
+            } else if (avatarContainer) { 
+                avatarContainer.innerHTML = displayName.charAt(0); 
+            }
             closeSettingsModal();
             const toast = document.createElement('div'); toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-2xl'; toast.innerHTML = `✅ Paramètres sauvegardés !`; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
         }
 
         function setTheme(theme) {
-            if (theme === 'light') { document.body.classList.add('bg-white', 'text-black'); document.body.classList.remove('bg-zinc-950', 'text-zinc-200'); } else { document.body.classList.remove('bg-white', 'text-black'); document.body.classList.add('bg-zinc-950', 'text-zinc-200'); }
+            if (theme === 'light') {
+                // Mode clair désactivé pour le moment
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-zinc-800 text-white px-6 py-3 rounded-2xl text-sm';
+                toast.innerHTML = `Le mode clair n'est pas encore disponible.`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
+                return;
+            }
+            // Mode sombre par défaut
+            document.body.classList.remove('bg-white', 'text-black');
+            document.body.classList.add('bg-zinc-950', 'text-zinc-200');
         }
 
         function setPassword() {
@@ -1342,12 +2731,18 @@
             const allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]');
             const project = allPlanning.find(p => p.id === projectId); if (!project) return;
             const profiles = JSON.parse(localStorage.getItem('dimensionspro_profiles') || '[]');
-            const assignedNames = project.assignedProfiles.map(id => { const p = profiles.find(pr => pr.id === id); return p ? (p.nom || p.name) : 'Inconnu'; });
+            const assignedNames = project.assignedProfiles.map(id => { 
+                const p = profiles.find(pr => pr.id === id); 
+                return p ? (p.nom || p.name) : 'Inconnu'; 
+            });
             let allPersonalTasks = [];
             project.assignedProfiles.forEach(profileId => {
                 const profileTasks = JSON.parse(localStorage.getItem('dimensionspro_personal_tasks_' + profileId) || '[]');
                 const projectTasks = profileTasks.filter(t => t.projectId === projectId);
-                projectTasks.forEach(task => { const profile = profiles.find(p => p.id === profileId); allPersonalTasks.push({ ...task, profileName: profile ? (profile.nom || profile.name) : 'Inconnu' }); });
+                projectTasks.forEach(task => { 
+                    const profile = profiles.find(p => p.id === profileId); 
+                    allPersonalTasks.push({ ...task, profileName: profile ? (profile.nom || profile.name) : 'Inconnu' }); 
+                });
             });
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black/90 z-[99999] flex items-center justify-center';
@@ -1355,7 +2750,15 @@
             document.body.appendChild(modal);
         }
 
-        function deleteProjectFromPlanning(projectId) { if (!confirm("Supprimer définitivement ce projet du calendrier ?")) return; let allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]'); allPlanning = allPlanning.filter(p => p.id !== projectId); localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning)); projects = projects.filter(p => p.id !== projectId); saveProjects(); renderPlanning(); }
+        function deleteProjectFromPlanning(projectId) { 
+            if (!confirm("Supprimer définitivement ce projet du calendrier ?")) return; 
+            let allPlanning = JSON.parse(localStorage.getItem('dimensionspro_all_planning') || '[]'); 
+            allPlanning = allPlanning.filter(p => p.id !== projectId); 
+            localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning)); 
+            projects = projects.filter(p => p.id !== projectId); 
+            saveProjects(); 
+            renderPlanning(); 
+        }
 
         function changeProjectDate(projectId, buttonElement) {
             const newDate = prompt("Nouvelle date (format: AAAA-MM-JJ) :"); if (!newDate) return;
@@ -1375,7 +2778,7 @@
             if (availableProfiles.length === 0) { alert("Tous les profils sont déjà assignés à ce projet"); return; }
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black/90 z-[99999] flex items-center justify-center';
-            modal.innerHTML = `<div class="glass rounded-3xl p-8 w-full max-w-md border border-zinc-700"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold">Ajouter des profils</h3><button onclick="this.closest('.fixed').remove()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-times text-2xl"></i></button></div><div class="max-h-[300px] overflow-auto border border-zinc-700 rounded-2xl p-4 bg-zinc-900 mb-6" id="add-profiles-list">${availableProfiles.map(profile => `<div class="flex items-center gap-x-3 p-3 hover:bg-zinc-800 rounded-xl cursor-pointer"><input type="checkbox" id="add-profile-${profile.id}" value="${profile.id}" class="w-5 h-5 accent-orange-500"><label for="add-profile-${profile.id}" class="flex-1 cursor-pointer"><div class="font-medium">${profile.nom || profile.name} ${profile.prenom || ''}</div></label></div>`).join('')}</div><button onclick="confirmAddProfiles('${projectId}', this)" class="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">Ajouter les profils sélectionnés</button></div>`;
+            modal.innerHTML = `<div class="glass rounded-3xl p-8 w-full max-w-md border border-zinc-700"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold">Ajouter des profils</h3><button onclick="this.closest('.fixed').remove()" class="text-zinc-400 hover:text-zinc-600"><i class="fa-solid fa-times text-2xl"></i></button></div><div class="max-h-[300px] overflow-auto border border-zinc-700 rounded-2xl p-4 bg-zinc-900 mb-6" id="add-profiles-list">${availableProfiles.map(profile => { const name = profile.nom || profile.name; return `<div class="flex items-center gap-x-3 p-3 hover:bg-zinc-800 rounded-xl cursor-pointer"><input type="checkbox" id="add-profile-${profile.id}" value="${profile.id}" class="w-5 h-5 accent-orange-500"><label for="add-profile-${profile.id}" class="flex-1 cursor-pointer"><div class="font-medium">${name}</div></label></div>`; }).join('')}</div><button onclick="confirmAddProfiles('${projectId}', this)" class="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl">Ajouter les profils sélectionnés</button></div>`;
             document.body.appendChild(modal);
         }
 
@@ -1392,6 +2795,12 @@
                 }
             });
             localStorage.setItem('dimensionspro_all_planning', JSON.stringify(allPlanning));
+
+            // Mettre à jour le badge si besoin
+            if (selectedProfileIds.includes(currentProfile)) {
+                updateNotificationBadge();
+            }
+
             buttonElement.closest('.fixed').remove(); showProjectDetails(projectId);
         }
 
@@ -1411,6 +2820,8 @@
         }
 
         window.onload = function() {
+            cleanupOrphanedData();
+            initPDFDatabase(); // Initialise IndexedDB pour les PDFs
             initFirebase();
             initializeApp();
         };
