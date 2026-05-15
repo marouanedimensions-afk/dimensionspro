@@ -1842,29 +1842,232 @@
             if (latestProject) projects[index] = latestProject;
             const project = projects[index]; if (!project) return;
 
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black/95 z-[99999] flex items-center justify-center p-4';
+            const detailScreen = document.createElement('div');
+            detailScreen.id = 'project-detail-screen';
+            detailScreen.className = 'fixed inset-0 bg-zinc-950 z-[99999] overflow-auto';
             const cover = project.cover || 'https://picsum.photos/id/1015/800/300';
             const phaseColor = { 'ESQUISSE': 'text-blue-400', 'APS': 'text-amber-400', 'APD': 'text-purple-400', 'AUTORISATION': 'text-emerald-400' }[project.phase] || 'text-zinc-400';
 
+            ensureProjectFolders(project);
             let filesHTML = '';
-            if (project.plans && project.plans.length > 0) {
-                filesHTML = project.plans.map((plan, i) => {
-                    // Support ancien format (plan.data) + nouveau format (IndexedDB)
-                    let downloadAction = '';
-                    if (plan.storedInIndexedDB) {
-                        downloadAction = `downloadBase64PDF('${project.id}', '${plan.name}', true)`;
-                    } else if (plan.data) {
-                        downloadAction = `downloadBase64PDF('${plan.data}', '${plan.name}')`;
-                    } else {
-                        downloadAction = `alert('PDF non disponible')`;
-                    }
-                    return `<div class="flex items-center justify-between bg-zinc-900 rounded-2xl px-4 py-3 mb-2"><div class="flex items-center gap-x-3"><i class="fa-solid fa-file-pdf text-orange-500 text-xl"></i><span class="font-medium">${plan.name}</span></div><div class="flex gap-x-2"><button onclick="${downloadAction}" class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded-xl flex items-center gap-x-2 hover:bg-emerald-700"><i class="fa-solid fa-download"></i> <span>Télécharger</span></button><button onclick="deletePlanFileFromDetail(${index}, ${i}, this)" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700"><i class="fa-solid fa-trash"></i></button></div></div>`;
-                }).join('');
-            } else { filesHTML = `<p class="text-zinc-500 italic py-4 text-center">Aucun PDF pour ce projet</p>`; }
+            const folders = project.pdfFolders || [];
+            const unfiledPDFs = project.plans.filter(p => !p.folderId);
+            if (folders.length === 0 && unfiledPDFs.length === 0) {
+                filesHTML = `<p class="text-zinc-500 italic py-4 text-center">Aucun PDF pour ce projet.<br>Utilisez "Dossier" ou "Ajouter".</p>`;
+            } else {
+                if (folders.length > 0) {
+                    filesHTML += `<div class="mb-4"><div class="text-xs uppercase tracking-widest text-zinc-500 mb-2 px-1">DOSSIERS</div>`;
+                    folders.forEach(folder => {
+                        const count = project.plans.filter(p => p.folderId === folder.id).length;
+                        filesHTML += `
+                            <div class="group flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-2xl px-4 py-3 mb-2 transition-all">
+                                <div class="flex items-center gap-x-3 flex-1 cursor-pointer" onclick="openFolderView(${index}, '${folder.id}', this)">
+                                    <i class="fa-solid fa-folder text-amber-400 text-2xl"></i>
+                                    <div>
+                                        <div class="font-semibold text-white">${folder.name}</div>
+                                        <div class="text-[10px] text-zinc-500">${count} PDF${count > 1 ? 's' : ''}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-x-1 opacity-70 group-hover:opacity-100">
+                                    <button onclick="event.stopImmediatePropagation(); exportFolder(${index}, '${folder.id}');" class="px-3 py-1.5 text-emerald-400 hover:text-emerald-300 text-xs"><i class="fa-solid fa-download"></i></button>
+                                    <button onclick="event.stopImmediatePropagation(); showFolderContextMenu(this, ${index}, '${folder.id}');" class="px-2 py-1.5 text-zinc-400 hover:text-white"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                </div>
+                            </div>`;
+                    });
+                    filesHTML += `</div>`;
+                }
+                if (unfiledPDFs.length > 0) {
+                    filesHTML += `<div class="mb-2"><div class="text-xs uppercase tracking-widest text-zinc-500 mb-2 px-1">PDFs NON CLASSÉS (${unfiledPDFs.length})</div>`;
+                    unfiledPDFs.forEach(plan => {
+                        const planIndex = project.plans.findIndex(p => p.id === plan.id);
+                        let downloadAction = plan.storedInIndexedDB ? `downloadBase64PDF('${project.id}', '${plan.name}', true)` : (plan.data ? `downloadBase64PDF('${plan.data}', '${plan.name}')` : `alert('PDF non disponible')`);
+                        filesHTML += `
+                            <div class="group flex items-center justify-between bg-zinc-900 hover:bg-zinc-800 rounded-2xl px-4 py-3 mb-1.5 border border-zinc-800">
+                                <div class="flex items-center gap-x-3 flex-1">
+                                    <i class="fa-solid fa-file-pdf text-orange-500 text-xl"></i>
+                                    <span class="font-medium text-sm truncate">${plan.name}</span>
+                                </div>
+                                <div class="flex items-center gap-x-1 opacity-60 group-hover:opacity-100">
+                                    <button onclick="${downloadAction}" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-xl flex items-center gap-x-1"><i class="fa-solid fa-download text-xs"></i> <span class="hidden md:inline">Télécharger</span></button>
+                                    <button onclick="event.stopImmediatePropagation(); showPDFContextMenu(this, ${index}, '${plan.id}', ${planIndex});" class="px-2.5 py-1.5 text-zinc-400 hover:text-white"><i class="fa-solid fa-ellipsis-v"></i></button>
+                                </div>
+                            </div>`;
+                    });
+                    filesHTML += `</div>`;
+                }
+            }
 
-            modal.innerHTML = `<div class="glass rounded-3xl w-full max-w-5xl border border-zinc-700 overflow-hidden max-h-[95vh] flex flex-col"><div class="relative h-64"><img src="${cover}" class="w-full h-full object-cover" alt=""><div class="absolute inset-0 bg-gradient-to-b from-black/60 to-black/90"></div><div class="absolute top-6 left-6 right-6 flex justify-between items-start"><div><div class="flex items-center gap-x-3"><span class="${phaseColor} text-sm font-bold px-4 py-1 rounded-full border border-current">${project.phase}</span></div><h2 class="text-white text-4xl font-bold mt-3">${project.name}</h2><p class="text-zinc-400 mt-1">${project.type} • ${project.lieu}</p></div><button onclick="this.closest('.fixed').remove()" class="text-white text-3xl hover:text-zinc-400">×</button></div></div><div class="flex-1 p-8 overflow-auto"><div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-1"><h4 class="font-semibold text-orange-400 mb-4 flex items-center gap-x-2"><i class="fa-solid fa-info-circle"></i> INFORMATIONS</h4><div class="space-y-4 text-sm"><div><span class="text-zinc-400">Maître d'ouvrage</span><br><span class="font-medium">${project.maitre}</span></div><div><span class="text-zinc-400">Phase actuelle</span><br><span class="font-medium ${phaseColor}">${project.phase}</span></div><div><span class="text-zinc-400">Date de création</span><br><span class="font-medium">${new Date(project.created || Date.now()).toLocaleDateString('fr-FR')}</span></div></div><div class="mt-6"><button onclick="changeProjectPhaseQuick(${index}, this)" class="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-sm flex items-center justify-center gap-x-2"><i class="fa-solid fa-sync"></i> Changer la phase</button></div></div><div class="lg:col-span-2"><div class="flex items-center justify-between mb-4"><h4 class="font-semibold text-orange-400 flex items-center gap-x-2"><i class="fa-solid fa-file-pdf"></i> DOCUMENTS PDF (${project.plans ? project.plans.length : 0})</h4><div class="flex gap-x-2"><button onclick="addPDFToProject(${index}, this)" class="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl text-sm flex items-center gap-x-2"><i class="fa-solid fa-plus"></i> <span>Ajouter PDF</span></button><button onclick="importPDFToProject(${index}, this)" class="px-5 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-2xl text-sm flex items-center gap-x-2"><i class="fa-solid fa-upload"></i> <span>Importer</span></button><button onclick="exportProjectPDF(${index})" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm flex items-center gap-x-2"><i class="fa-solid fa-download"></i> <span>Exporter</span></button></div></div><div class="max-h-[520px] overflow-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">${filesHTML}</div></div></div></div><div class="border-t border-zinc-800 p-6 flex justify-end"><button onclick="deleteProjectById('${project.id}'); this.closest('.fixed').remove()" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl">Supprimer</button></div></div>`;
-            document.body.appendChild(modal);
+            const phases = ['ESQUISSE', 'APS', 'APD', 'AUTORISATION'];
+            const currentPhaseIndex = phases.indexOf(project.phase);
+            let phaseStepperHTML = `<div class="flex items-center justify-between mb-6 px-2">`;
+            phases.forEach((ph, i) => {
+                const isActive = i === currentPhaseIndex;
+                const isDone = i < currentPhaseIndex;
+                const color = isActive ? 'bg-orange-500 text-white' : isDone ? 'bg-emerald-500 text-white' : 'bg-zinc-700 text-zinc-400';
+                phaseStepperHTML += `
+                    <div onclick="changeProjectPhaseFromDetail(${index}, '${ph}', this)" class="flex flex-col items-center cursor-pointer group">
+                        <div class="w-9 h-9 rounded-full ${color} flex items-center justify-center text-sm font-bold transition-all group-hover:scale-110">${i+1}</div>
+                        <div class="text-[10px] mt-1.5 font-medium ${isActive ? 'text-orange-400' : isDone ? 'text-emerald-400' : 'text-zinc-500'}">${ph}</div>
+                    </div>
+                    ${i < 3 ? `<div class="flex-1 h-0.5 mx-1 ${isDone ? 'bg-emerald-500' : 'bg-zinc-700'}"></div>` : ''}
+                `;
+            });
+            phaseStepperHTML += `</div>`;
+
+            detailScreen.innerHTML = `
+                <div class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-lg border-b border-zinc-800 px-8 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-x-4">
+                        <button onclick="closeProjectDetail()" class="flex items-center gap-x-2 text-orange-400 hover:text-orange-500 font-semibold text-sm">
+                            <i class="fa-solid fa-arrow-left text-lg"></i> 
+                            <span>Retour aux Projets</span>
+                        </button>
+                        <div class="w-px h-6 bg-zinc-700 mx-2"></div>
+                        <div>
+                            <div class="font-bold text-xl">${project.name}</div>
+                            <div class="text-xs text-zinc-500">${project.type} • ${project.lieu}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-x-3">
+                        <button onclick="uploadProjectCover(${index}); event.stopImmediatePropagation();" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-2xl text-sm flex items-center gap-x-2">
+                            <i class="fa-solid fa-image"></i> <span>Changer photo</span>
+                        </button>
+                        <button onclick="editProjectDirect(${index}); closeProjectDetail();" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-2xl text-sm flex items-center gap-x-2">
+                            <i class="fa-solid fa-edit"></i> <span>Modifier</span>
+                        </button>
+                        <button onclick="deleteProjectById('${project.id}'); closeProjectDetail();" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-2xl text-sm flex items-center gap-x-2">
+                            <i class="fa-solid fa-trash"></i> <span>Supprimer</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="relative h-[420px]">
+                    <img src="${cover}" class="w-full h-full object-cover" alt="">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-zinc-950"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-10">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <div class="flex items-center gap-x-3 mb-3">
+                                    <span class="${phaseColor} text-sm font-bold px-5 py-1.5 rounded-full border border-current">${project.phase}</span>
+                                </div>
+                                <h1 class="text-white text-6xl font-bold tracking-tighter">${project.name}</h1>
+                                <p class="text-2xl text-zinc-300 mt-2">${project.type} • ${project.lieu}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-zinc-500">Maître d'ouvrage</div>
+                                <div class="text-xl font-semibold text-white">${project.maitre}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-w-7xl mx-auto px-8 py-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5">
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+                                <h3 class="font-semibold text-xl mb-6 flex items-center gap-x-3">
+                                    <i class="fa-solid fa-road text-orange-500"></i> 
+                                    <span>Phases du Projet</span>
+                                </h3>
+                                ${phaseStepperHTML}
+                                
+                                <div class="mt-8 pt-6 border-t border-zinc-800">
+                                    <div class="text-xs text-zinc-500 mb-3">INFORMATIONS CLÉS</div>
+                                    <div class="space-y-5 text-sm">
+                                        <div class="flex justify-between"><span class="text-zinc-400">Date de création</span><span class="font-medium">${new Date(project.created || Date.now()).toLocaleDateString('fr-FR')}</span></div>
+                                        <div class="flex justify-between"><span class="text-zinc-400">Profils assignés</span><span class="font-medium">${project.assignedProfiles ? project.assignedProfiles.length : 0}</span></div>
+                                        <div class="flex justify-between"><span class="text-zinc-400">PDFs</span><span class="font-medium">${project.plans ? project.plans.length : 0}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7">
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="font-semibold text-xl flex items-center gap-x-3">
+                                        <i class="fa-solid fa-file-pdf text-orange-500"></i> 
+                                        <span>Documents PDF</span>
+                                        <span class="text-sm font-normal text-zinc-500">(${project.plans ? project.plans.length : 0})</span>
+                                    </h3>
+                                    <div class="flex items-center gap-x-3">
+                                        <div class="relative">
+                                            <button onclick="toggleActionsMenu(${index}, this)" 
+                                                    class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl text-sm flex items-center gap-x-2 font-semibold transition-all active:scale-[0.985]">
+                                                <span>Actions</span>
+                                                <i class="fa-solid fa-chevron-down text-xs ml-0.5"></i>
+                                            </button>
+                                            <div id="actions-menu-${index}" class="hidden absolute right-0 mt-2 w-52 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl py-1 z-[9999]">
+                                                <div onclick="createPDFFolder(${index}, this); hideActionsMenu(${index});" class="px-4 py-3 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-sm rounded-t-2xl">
+                                                    <i class="fa-solid fa-folder text-amber-400 w-5"></i> 
+                                                    <span>Créer un dossier</span>
+                                                </div>
+                                                <div onclick="addPDFToProject(${index}, this); hideActionsMenu(${index});" class="px-4 py-3 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-sm">
+                                                    <i class="fa-solid fa-plus text-orange-400 w-5"></i> 
+                                                    <span>Ajouter un PDF</span>
+                                                </div>
+                                                <div onclick="importPDFToProject(${index}, this); hideActionsMenu(${index});" class="px-4 py-3 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-sm rounded-b-2xl">
+                                                    <i class="fa-solid fa-upload text-zinc-400 w-5"></i> 
+                                                    <span>Importer des PDFs</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button onclick="exportProjectPDF(${index})" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm flex items-center gap-x-2 font-medium transition-all">
+                                            <i class="fa-solid fa-download"></i> <span>Exporter tout</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="max-h-[520px] overflow-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-zinc-700">
+                                    ${filesHTML}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(detailScreen);
+        }
+
+        function closeProjectDetail() {
+            const screen = document.getElementById('project-detail-screen');
+            if (screen) screen.remove();
+            if (typeof renderProjectsGrid === 'function') renderProjectsGrid();
+        }
+
+        // ==================== ACTIONS DROPDOWN (FINAL VERIFIED) ====================
+        function toggleActionsMenu(projectIndex, btnElement) {
+            const menu = document.getElementById(`actions-menu-${projectIndex}`);
+            if (!menu) return;
+
+            document.querySelectorAll('[id^="actions-menu-"]').forEach(m => {
+                if (m.id !== `actions-menu-${projectIndex}`) m.classList.add('hidden');
+            });
+
+            menu.classList.toggle('hidden');
+
+            setTimeout(() => {
+                const closeHandler = (e) => {
+                    if (!btnElement.contains(e.target) && !menu.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                document.addEventListener('click', closeHandler, { once: true });
+            }, 50);
+        }
+
+        function hideActionsMenu(projectIndex) {
+            const menu = document.getElementById(`actions-menu-${projectIndex}`);
+            if (menu) menu.classList.add('hidden');
+        }
+
+        function changeProjectPhaseFromDetail(index, newPhase, element) {
+            projects[index].phase = newPhase;
+            projects[index].updatedAt = new Date().toISOString();
+            saveProjects();
+            const screen = document.getElementById('project-detail-screen');
+            if (screen) screen.remove();
+            setTimeout(() => showProjectDetail(index), 80);
         }
 
         // Compression d'image pour éviter de remplir localStorage
@@ -2012,6 +2215,251 @@
             input.click();
         }
         function importPDFToProject(index, btn) { addPDFToProject(index, btn); }
+
+        // ==================== GESTION DOSSIERS PDF ====================
+        function ensureProjectFolders(project) {
+            if (!project.pdfFolders) project.pdfFolders = [];
+            if (!project.plans) project.plans = [];
+            project.plans.forEach(plan => {
+                if (!plan.id) plan.id = 'pdf_' + Date.now() + Math.random().toString(36).substr(2, 5);
+                if (typeof plan.folderId === 'undefined') plan.folderId = null;
+            });
+        }
+
+        function createPDFFolder(projectIndex, btnElement) {
+            const project = projects[projectIndex];
+            ensureProjectFolders(project);
+            const folderName = prompt("Nom du nouveau dossier :", "Nouveau dossier");
+            if (!folderName || !folderName.trim()) return;
+            const newFolder = { id: 'folder_' + Date.now(), name: folderName.trim(), createdAt: new Date().toISOString() };
+            project.pdfFolders.push(newFolder);
+            project.updatedAt = new Date().toISOString();
+            saveProjects();
+            if (typeof saveProjectToFirestore === 'function') saveProjectToFirestore(project);
+            btnElement.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
+            showToast(`Dossier "${folderName}" créé !`);
+        }
+
+        function renamePDFFolder(projectIndex, folderId, btnElement) {
+            const project = projects[projectIndex];
+            const folder = project.pdfFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const newName = prompt("Nouveau nom du dossier :", folder.name);
+            if (!newName || !newName.trim() || newName.trim() === folder.name) return;
+            folder.name = newName.trim();
+            project.updatedAt = new Date().toISOString();
+            saveProjects();
+            btnElement.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
+        }
+
+        function deletePDFFolder(projectIndex, folderId, btnElement) {
+            if (!confirm("Supprimer ce dossier ? Les PDFs seront déplacés vers 'Non classés'.")) return;
+            const project = projects[projectIndex];
+            const folderIndex = project.pdfFolders.findIndex(f => f.id === folderId);
+            if (folderIndex === -1) return;
+            project.plans.forEach(plan => { if (plan.folderId === folderId) plan.folderId = null; });
+            project.pdfFolders.splice(folderIndex, 1);
+            project.updatedAt = new Date().toISOString();
+            saveProjects();
+            btnElement.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
+            showToast("Dossier supprimé");
+        }
+
+        function movePDFToFolder(projectIndex, planId, targetFolderId, btnElement) {
+            const project = projects[projectIndex];
+            const plan = project.plans.find(p => p.id === planId);
+            if (!plan) return;
+            plan.folderId = targetFolderId;
+            project.updatedAt = new Date().toISOString();
+            saveProjects();
+            if (btnElement) btnElement.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
+        }
+
+        function exportFolder(projectIndex, folderId) {
+            const project = projects[projectIndex];
+            const folder = project.pdfFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const folderPDFs = project.plans.filter(p => p.folderId === folderId);
+            if (folderPDFs.length === 0) { alert("Dossier vide"); return; }
+            if (confirm(`Exporter les ${folderPDFs.length} PDFs du dossier "${folder.name}" ?`)) {
+                folderPDFs.forEach((plan, idx) => {
+                    setTimeout(() => {
+                        const realIdx = project.plans.findIndex(p => p.id === plan.id);
+                        if (realIdx !== -1) downloadSinglePDF(projectIndex, realIdx);
+                    }, idx * 600);
+                });
+            }
+        }
+
+        function downloadSinglePDF(projectIndex, planIndex) {
+            const plan = projects[projectIndex].plans[planIndex];
+            const projectId = projects[projectIndex].id;
+            if (plan.storedInIndexedDB) downloadBase64PDF(projectId, plan.name, true);
+            else if (plan.data) downloadBase64PDF(plan.data, plan.name);
+            else alert('PDF non disponible');
+        }
+
+        // ==================== MENUS CONTEXTUELS & VUE DOSSIER ====================
+        function showFolderContextMenu(element, projectIndex, folderId) {
+            document.querySelectorAll('.context-menu').forEach(el => el.remove());
+            const project = projects[projectIndex];
+            const folder = project.pdfFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const rect = element.getBoundingClientRect();
+            const menu = document.createElement('div');
+            menu.className = 'context-menu fixed bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl py-1 z-[999999] text-sm min-w-[180px]';
+            menu.style.top = `${rect.bottom + 4}px`;
+            menu.style.left = `${rect.left - 80}px`;
+            menu.innerHTML = `
+                <div onclick="openFolderView(${projectIndex}, '${folderId}', this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-white"><i class="fa-solid fa-folder-open w-4"></i> <span>Ouvrir le dossier</span></div>
+                <div onclick="renamePDFFolder(${projectIndex}, '${folderId}', this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-white"><i class="fa-solid fa-edit w-4"></i> <span>Renommer</span></div>
+                <div onclick="exportFolder(${projectIndex}, '${folderId}'); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-emerald-400"><i class="fa-solid fa-download w-4"></i> <span>Exporter le dossier</span></div>
+                <div class="border-t border-zinc-700 my-1"></div>
+                <div onclick="deletePDFFolder(${projectIndex}, '${folderId}', this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-red-900/50 cursor-pointer flex items-center gap-x-3 text-red-400"><i class="fa-solid fa-trash w-4"></i> <span>Supprimer dossier</span></div>
+            `;
+            document.body.appendChild(menu);
+            // Prefer open upward (especially when near bottom of screen)
+            setTimeout(() => {
+                const mRect = menu.getBoundingClientRect();
+                const spaceAbove = rect.top;
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                if (spaceAbove > mRect.height + 20 || spaceBelow < mRect.height + 20) {
+                    menu.style.top = `${rect.top - mRect.height - 8}px`;
+                }
+            }, 0);
+            setTimeout(() => {
+                document.addEventListener('click', function handler(e) {
+                    if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', handler); }
+                }, { once: true });
+            }, 10);
+        }
+
+        function showPDFContextMenu(element, projectIndex, planId, planIndex) {
+            document.querySelectorAll('.context-menu').forEach(el => el.remove());
+            const project = projects[projectIndex];
+            const plan = project.plans.find(p => p.id === planId);
+            if (!plan) return;
+            const rect = element.getBoundingClientRect();
+            const menu = document.createElement('div');
+            menu.className = 'context-menu fixed bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl py-1 z-[999999] text-sm min-w-[200px]';
+            menu.style.top = `${rect.bottom + 4}px`;
+            menu.style.left = `${Math.max(20, rect.left - 100)}px`;
+            let moveOptions = '';
+            const folders = project.pdfFolders || [];
+            if (folders.length > 0) {
+                moveOptions = folders.map(f => `<div onclick="movePDFToFolder(${projectIndex}, '${planId}', '${f.id}', this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-xs"><i class="fa-solid fa-folder w-3 text-amber-400"></i> <span>${f.name}</span></div>`).join('');
+            }
+            menu.innerHTML = `
+                <div onclick="downloadSinglePDF(${projectIndex}, ${planIndex}); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-emerald-400"><i class="fa-solid fa-download w-4"></i> <span>Télécharger</span></div>
+                <div onclick="renamePDFInProject(${projectIndex}, '${planId}', this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-white"><i class="fa-solid fa-edit w-4"></i> <span>Renommer</span></div>
+                ${folders.length > 0 ? `<div class="border-t border-zinc-700 my-1"></div><div class="px-4 py-1 text-[10px] text-zinc-500">Déplacer vers :</div>${moveOptions}<div onclick="movePDFToFolder(${projectIndex}, '${planId}', null, this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-xs text-zinc-400"><i class="fa-solid fa-inbox w-3"></i> <span>Non classés</span></div>` : ''}
+                <div class="border-t border-zinc-700 my-1"></div>
+                <div onclick="deletePlanFileFromDetail(${projectIndex}, ${planIndex}, this); document.querySelectorAll('.context-menu').forEach(el => el.remove());" class="px-4 py-2.5 hover:bg-red-900/50 cursor-pointer flex items-center gap-x-3 text-red-400"><i class="fa-solid fa-trash w-4"></i> <span>Supprimer</span></div>
+            `;
+            document.body.appendChild(menu);
+            // Prefer open upward (especially when near bottom of screen)
+            setTimeout(() => {
+                const mRect = menu.getBoundingClientRect();
+                const spaceAbove = rect.top;
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                if (spaceAbove > mRect.height + 20 || spaceBelow < mRect.height + 20) {
+                    menu.style.top = `${rect.top - mRect.height - 8}px`;
+                }
+            }, 0);
+            setTimeout(() => {
+                document.addEventListener('click', function handler(e) {
+                    if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', handler); }
+                }, { once: true });
+            }, 10);
+        }
+
+        function openFolderView(projectIndex, folderId, element) {
+            document.querySelectorAll('.context-menu').forEach(el => el.remove());
+            const project = projects[projectIndex];
+            const folder = project.pdfFolders.find(f => f.id === folderId);
+            if (!folder) return;
+            const folderPDFs = project.plans.filter(p => p.folderId === folderId);
+            const folderView = document.createElement('div');
+            folderView.className = 'fixed inset-0 bg-black/90 z-[999999] flex items-center justify-center p-4';
+            let pdfsHTML = folderPDFs.length === 0 ? `<p class="text-center text-zinc-500 py-8">Dossier vide.</p>` : folderPDFs.map(plan => {
+                const planIndex = project.plans.findIndex(p => p.id === plan.id);
+                let downloadAction = plan.storedInIndexedDB ? `downloadBase64PDF('${project.id}', '${plan.name}', true)` : (plan.data ? `downloadBase64PDF('${plan.data}', '${plan.name}')` : `alert('PDF non disponible')`);
+                return `<div class="flex items-center justify-between bg-zinc-900 rounded-2xl px-4 py-3 mb-2"><div class="flex items-center gap-x-3"><i class="fa-solid fa-file-pdf text-orange-500 text-xl"></i><span class="font-medium">${plan.name}</span></div><div class="flex gap-x-2"><button onclick="${downloadAction}" class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded-xl flex items-center gap-x-2"><i class="fa-solid fa-download"></i> <span>Télécharger</span></button><button onclick="showPDFContextMenuInFolder(this, ${projectIndex}, '${plan.id}', ${planIndex}, '${folderId}');" class="px-3 py-1.5 bg-zinc-700 text-white text-sm rounded-xl"><i class="fa-solid fa-ellipsis-v"></i></button></div></div>`;
+            }).join('');
+            folderView.innerHTML = `<div class="bg-zinc-950 border border-zinc-700 rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col"><div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900"><div class="flex items-center gap-x-3"><i class="fa-solid fa-folder text-amber-400 text-3xl"></i><div><div class="font-bold text-xl">${folder.name}</div><div class="text-xs text-zinc-500">${folderPDFs.length} document${folderPDFs.length > 1 ? 's' : ''}</div></div></div><div class="flex items-center gap-x-2">
+    <button onclick="exportFolder(${projectIndex}, '${folderId}');" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm flex items-center gap-x-2">
+        <i class="fa-solid fa-download"></i> <span>Exporter tout</span>
+    </button>
+    <button onclick="importPDFToFolder(${projectIndex}, '${folderId}');" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl text-sm flex items-center gap-x-2">
+        <i class="fa-solid fa-upload"></i> <span>Importer PDF</span>
+    </button>
+    <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-2xl text-sm">Fermer</button>
+</div></div><div class="p-6 overflow-auto flex-1">${pdfsHTML}</div><div class="px-6 py-3 border-t border-zinc-800 bg-zinc-900 text-xs text-zinc-500 flex items-center justify-between"><div>Cliquez sur les ... pour plus d'options</div><button onclick="moveAllFromFolderToUnfiled(${projectIndex}, '${folderId}', this)" class="text-red-400 hover:text-red-500 text-xs">Vider → Non classés</button></div></div>`;
+            document.body.appendChild(folderView);
+        }
+
+        function showPDFContextMenuInFolder(element, projectIndex, planId, planIndex, folderId) {
+            document.querySelectorAll('.context-menu').forEach(el => el.remove());
+            const project = projects[projectIndex];
+            const plan = project.plans.find(p => p.id === planId);
+            if (!plan) return;
+            const rect = element.getBoundingClientRect();
+            const menu = document.createElement('div');
+            menu.className = 'context-menu fixed bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl py-1 z-[999999] text-sm min-w-[180px]';
+            menu.style.top = `${rect.bottom + 4}px`;
+            menu.style.left = `${rect.left - 60}px`;
+            menu.innerHTML = `
+                <div onclick="renamePDFInProject(${projectIndex}, '${planId}', this); document.querySelectorAll('.context-menu').forEach(el => el.remove()); this.closest('.fixed').remove();" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3"><i class="fa-solid fa-edit w-4"></i> <span>Renommer</span></div>
+                <div onclick="movePDFToFolder(${projectIndex}, '${planId}', null, this); document.querySelectorAll('.context-menu').forEach(el => el.remove()); this.closest('.fixed').remove();" class="px-4 py-2.5 hover:bg-zinc-800 cursor-pointer flex items-center gap-x-3 text-xs"><i class="fa-solid fa-inbox w-4"></i> <span>Déplacer vers Non classés</span></div>
+                <div class="border-t border-zinc-700 my-1"></div>
+                <div onclick="deletePlanFileFromDetail(${projectIndex}, ${planIndex}, this); document.querySelectorAll('.context-menu').forEach(el => el.remove()); this.closest('.fixed').remove();" class="px-4 py-2.5 hover:bg-red-900/50 cursor-pointer flex items-center gap-x-3 text-red-400"><i class="fa-solid fa-trash w-4"></i> <span>Supprimer</span></div>
+            `;
+            document.body.appendChild(menu);
+            // Prefer open upward (especially when near bottom of screen)
+            setTimeout(() => {
+                const mRect = menu.getBoundingClientRect();
+                const spaceAbove = rect.top;
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                if (spaceAbove > mRect.height + 20 || spaceBelow < mRect.height + 20) {
+                    menu.style.top = `${rect.top - mRect.height - 8}px`;
+                }
+            }, 0);
+            setTimeout(() => {
+                document.addEventListener('click', function handler(e) {
+                    if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', handler); }
+                }, { once: true });
+            }, 10);
+        }
+
+        function moveAllFromFolderToUnfiled(projectIndex, folderId, btn) {
+            if (!confirm("Déplacer tous les PDFs vers 'Non classés' ?")) return;
+            const project = projects[projectIndex];
+            project.plans.forEach(plan => { if (plan.folderId === folderId) plan.folderId = null; });
+            project.updatedAt = new Date().toISOString();
+            saveProjects();
+            btn.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
+        }
+
+        function renamePDFInProject(projectIndex, planId, btnElement) {
+            const project = projects[projectIndex];
+            const plan = project.plans.find(p => p.id === planId);
+            if (!plan) return;
+            const newName = prompt("Nouveau nom du PDF :", plan.name);
+            if (!newName || !newName.trim() || newName.trim() === plan.name) return;
+            plan.name = newName.trim();
+            project.updatedAt = new Date().toISOString();
+            saveProjects();
+            if (btnElement) btnElement.closest('.fixed').remove();
+            showProjectDetail(projectIndex);
+        }
 
         async function deletePlanFileFromDetail(projectIndex, fileIndex, btn) {
             if (!confirm("Supprimer ce PDF ?")) return;
